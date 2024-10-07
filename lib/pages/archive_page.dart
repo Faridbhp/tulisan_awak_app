@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:tulisan_awak_app/components/grid_card.dart';
@@ -17,7 +15,6 @@ class ArchivePage extends StatelessWidget {
       converter: (store) => store.state.notes, // Get notes from the store
       builder: (context, notes) {
         final filteredNotes = notes.where((note) => note.isArsip).toList();
-        stderr.writeln('notelist $notes');
         return Scaffold(
           appBar: AppBar(
             automaticallyImplyLeading: false,
@@ -25,7 +22,6 @@ class ArchivePage extends StatelessWidget {
               decoration: BoxDecoration(
                   color: Colors.lightBlue,
                   borderRadius: BorderRadius.circular(10)),
-              margin: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
               child: Row(children: [
                 Builder(
                   builder: (context) {
@@ -40,38 +36,54 @@ class ArchivePage extends StatelessWidget {
                     );
                   },
                 ),
-                Text(
-                  'Arsip Anda',
-                  style: TextStyle(color: Colors.white),
+                Expanded(
+                  // Membungkus Text dalam Expanded
+                  child: Text(
+                    'Arsip',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
+                  ),
                 ),
               ]),
             ),
           ),
           drawer: DrawerPage(),
-          body: notes.isEmpty
+          body: filteredNotes.isEmpty
               ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.lightbulb_outline,
-                          size: 100, color: Colors.white70),
+                          size: 80, color: Colors.black),
                       SizedBox(height: 20),
-                      Text('Catatan yang Anda tambahkan muncul di sini'),
+                      SizedBox(
+                        width: 250,
+                        child: Text(
+                          'Arsip yang Anda tambahkan akan muncul di sini',
+                          textAlign: TextAlign.center,
+                          softWrap: true, // Memungkinkan teks membungkus
+                        ),
+                      ),
                     ],
                   ),
                 )
               : LayoutBuilder(
                   builder: (BuildContext context, BoxConstraints constraints) {
                     if (constraints.maxWidth <= 500) {
-                      return ListView.builder(
-                        itemCount: filteredNotes.length,
-                        itemBuilder: (context, index) {
-                          final note = filteredNotes[index];
-                          return NoteCard(
-                            note: note,
-                            index: index,
-                          );
-                        },
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 30),
+                        child: ListView.builder(
+                          itemCount: filteredNotes.length,
+                          itemBuilder: (context, index) {
+                            final note = filteredNotes[index];
+                            return NoteCard(
+                              note: note,
+                              index: index,
+                            );
+                          },
+                        ),
                       );
                     } else if (constraints.maxWidth <= 700) {
                       return GridCard(
@@ -91,6 +103,12 @@ class ArchivePage extends StatelessWidget {
                     }
                   },
                 ),
+          bottomNavigationBar: ClipRRect(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            child: BottomAppBar(
+              color: Colors.lightBlue,
+            ),
+          ),
         );
       },
     );
