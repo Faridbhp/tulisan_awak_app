@@ -1,13 +1,16 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:tulisan_awak_app/actions/actions.dart';
+import 'package:tulisan_awak_app/components/alert_dialog.dart';
 import 'package:tulisan_awak_app/models/note.dart';
 import 'package:tulisan_awak_app/state/app_state.dart';
+import 'package:uuid/uuid.dart';
 
 class NotePage extends StatefulWidget {
-  final Note? note; // Receive Note object from HomePage
-  final int? noteIndex;
-  const NotePage({super.key, this.note, this.noteIndex});
+  final Note? note;
+  const NotePage({super.key, this.note});
 
   @override
   State<NotePage> createState() => _NotePageState();
@@ -17,6 +20,9 @@ class _NotePageState extends State<NotePage> {
   late TextEditingController titleController;
   late TextEditingController noteController;
   bool isArsip = false;
+  bool isPinned = false;
+  var uuid = Uuid().v4();
+  String keyData = '';
 
   @override
   void initState() {
@@ -26,6 +32,8 @@ class _NotePageState extends State<NotePage> {
     titleController = TextEditingController(text: widget.note?.title ?? '');
     noteController = TextEditingController(text: widget.note?.content ?? '');
     isArsip = widget.note?.isArsip ?? false;
+    isPinned = widget.note?.isPinned ?? false;
+    keyData = widget.note?.keyData ?? Uuid().v4();
   }
 
   @override
@@ -36,82 +44,125 @@ class _NotePageState extends State<NotePage> {
     super.dispose();
   }
 
+  void saveData() {
+    final note = Note(
+      keyData: keyData,
+      title: titleController.text,
+      content: noteController.text,
+      isArsip: isArsip,
+      isPinned: isPinned,
+    );
+
+    if (widget.note != null) {
+      // Jika keyData ada, update catatan
+      StoreProvider.of<AppState>(context).dispatch(UpdateNoteAction(note));
+    } else {
+      // Jika keyData tidak ada, tambahkan catatan baru
+      StoreProvider.of<AppState>(context).dispatch(AddNoteAction(note));
+    }
+
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
+    stderr.writeln('notess data $uuid');
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.lightBlue,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: () {
-            final note = Note(
-              title: titleController.text,
-              content: noteController.text,
-              isArsip: isArsip
-            );
-
-            if (widget.noteIndex != null) {
-              // Jika noteIndex ada, update catatan
-              StoreProvider.of<AppState>(context)
-                  .dispatch(UpdateNoteAction(note, widget.noteIndex!));
-            } else {
-              // Jika noteIndex tidak ada, tambahkan catatan baru
-              StoreProvider.of<AppState>(context).dispatch(AddNoteAction(note));
-            }
-
-            Navigator.pop(context);
-          },
+          onPressed: saveData,
         ),
         actions: [
           IconButton(
             icon: Icon(
-              Icons.push_pin_outlined,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              // Action for pin icon
-            },
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.archive_outlined,
+              isPinned ? Icons.push_pin : Icons.push_pin_outlined,
               color: Colors.white,
             ),
             onPressed: () {
               setState(() {
-                isArsip = !isArsip;
+                isPinned = !isPinned;
               });
-              // Action for archive icon
             },
           ),
+          IconButton(
+            icon: Icon(
+              isArsip ? Icons.unarchive_outlined : Icons.archive_outlined,
+              color: Colors.white,
+            ),
+            // Action for archive icon
+            onPressed: () {
+              setState(() {
+                isArsip = !isArsip;
+              });
+
+              // Show dialog
+              showDialog(
+                barrierDismissible: false,
+                context: context,
+                builder: (context) {
+                  Future.delayed(Duration(seconds: 1), () {
+                    Navigator.of(context).pop(); // Dismiss the dialog
+                  });
+
+                  return CustomAlertDialog(
+                    title: isArsip ? "Berhasil!" : "Dibatalkan",
+                    message: isArsip
+                        ? "Catatan berhasil diarsipkan"
+                        : "Pengarsipan catatan dibatalkan",
+                    icon: isArsip ? Icons.check_circle : Icons.cancel,
+                    iconColor: isArsip ? Colors.green : Colors.red,
+                  );
+                },
+              );
+            },
+          ),
+          if (widget.note != null) ...[
+            IconButton(
+                icon: Icon(
+                  Icons.delete,
+                  color: Colors.white,
+                ),
+                onPressed: () {
+                  // Dispatch aksi untuk menghapus catatan
+                  StoreProvider.of<AppState>(context)
+                      .dispatch(DeleteNoteAction(widget.note!.keyData));
+                  Navigator.pop(context); // Tutup dialog setelah menghapus
+                }),
+          ]
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0), // Padding around content
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextField(
-              controller: titleController, // Bind to titleController
-              decoration: InputDecoration(
-                hintText: 'Judul', // Placeholder for title
-                border: InputBorder.none,
-                hintStyle: TextStyle(fontSize: 28),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0), // Padding around content
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                controller: titleController, // Bind to titleController
+                decoration: InputDecoration(
+                  hintText: 'Judul', // Placeholder for title
+                  border: InputBorder.none,
+                  hintStyle: TextStyle(fontSize: 28),
+                ),
+                style: TextStyle(fontSize: 28),
+                maxLines: null, // Allow multiple lines
+                textAlignVertical: TextAlignVertical.top, // Align text to the top
               ),
-              style: TextStyle(fontSize: 28),
-            ),
-            SizedBox(height: 10),
-            TextField(
-              controller: noteController, // Bind to noteController
-              decoration: InputDecoration(
-                hintText: 'Catatan', // Placeholder for note content
-                border: InputBorder.none,
-                hintStyle: TextStyle(fontSize: 18),
+              SizedBox(height: 10),
+              TextField(
+                controller: noteController, // Bind to noteController
+                decoration: InputDecoration(
+                  hintText: 'Catatan', // Placeholder for note content
+                  border: InputBorder.none,
+                  hintStyle: TextStyle(fontSize: 18),
+                ),
+                style: TextStyle(fontSize: 18),
+                maxLines: null, // Allows multiple lines
               ),
-              style: TextStyle(fontSize: 18),
-              maxLines: null, // Allows multiple lines
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: BottomAppBar(

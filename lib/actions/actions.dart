@@ -9,13 +9,12 @@ class AddNoteAction {
 
 class UpdateNoteAction {
   final Note updatedNote;
-  final int index;
 
-  UpdateNoteAction(this.updatedNote, this.index);
+  UpdateNoteAction(this.updatedNote);
 }
 
 class DeleteNoteAction {
-  final int index;
+  final String keyData;
 
-  DeleteNoteAction(this.index);
+  DeleteNoteAction(this.keyData);
 }

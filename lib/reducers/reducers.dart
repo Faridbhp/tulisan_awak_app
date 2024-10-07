@@ -8,14 +8,32 @@ AppState appReducer(AppState state, dynamic action) {
     // Tambah catatan baru
     return AppState(notes: List.from(state.notes)..add(action.note));
   } else if (action is UpdateNoteAction) {
-    // Update catatan berdasarkan index
     List<Note> updatedNotes = List.from(state.notes);
-    updatedNotes[action.index] = action.updatedNote;
+
+    // Temukan index berdasarkan keyData yang sesuai
+    int noteIndex = updatedNotes
+        .indexWhere((note) => note.keyData == action.updatedNote.keyData);
+
+    if (noteIndex != -1) {
+      // Jika ditemukan, update catatan
+      updatedNotes[noteIndex] = action.updatedNote;
+    }
+
     return AppState(notes: updatedNotes);
   } else if (action is DeleteNoteAction) {
-    // Hapus catatan berdasarkan index
+    // Salin daftar catatan
     List<Note> updatedNotes = List.from(state.notes);
-    updatedNotes.removeAt(action.index);
+
+    // Temukan index catatan yang cocok dengan keyData
+    int noteIndex =
+        updatedNotes.indexWhere((note) => note.keyData == action.keyData);
+
+    if (noteIndex != -1) {
+      // Jika ditemukan, hapus catatan
+      updatedNotes.removeAt(noteIndex);
+    }
+
+    // Kembalikan state dengan daftar catatan yang diperbarui
     return AppState(notes: updatedNotes);
   }
 

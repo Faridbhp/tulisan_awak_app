@@ -43,13 +43,13 @@ class DrawerPage extends StatelessWidget {
             },
           ),
           // next buat pengaturan
-          ListTile(
-            leading: Icon(Icons.settings),
-            title: Text('Pengaturan'),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
+          // ListTile(
+          //   leading: Icon(Icons.settings),
+          //   title: Text('Pengaturan'),
+          //   onTap: () {
+          //     Navigator.pop(context);
+          //   },
+          // ),
         ],
       ),
     );
