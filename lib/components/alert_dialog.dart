@@ -18,29 +18,26 @@ class CustomAlertDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Center(
-        child: Text(
-          title,
-          style:
-              TextStyle(fontWeight: FontWeight.bold, color: Colors.lightBlue),
-        ),
-      ),
-      content: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
+        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           Icon(
             icon,
             color: iconColor,
-            size: 40,
+            size: 20,
           ),
-          SizedBox(width: 10), // Add space between icon and text
-          Expanded(
-            child: Text(
-              message,
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 20),
-            ),
+          SizedBox(width: 10),
+          Text(
+            title,
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.lightBlue,
+                fontSize: 16),
           ),
-        ],
+        ]),
+      ),
+      content: Text(
+        message,
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: 14),
       ),
     );
   }
