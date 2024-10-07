@@ -13,7 +13,7 @@ Tulisan Awak adalah aplikasi catatan yang serbaguna yang dikembangkan menggunaka
 
 Untuk memulai dengan aplikasi Tulisan Awak, ikuti instruksi di bawah ini:
 - Kloning repositori:
-  - git clone [https://github.com/username_anda/tulisan_awak_app.git](https://github.com/Faridbhp/tulisan_awak_app.git)
+  - git clone
   - cd tulisan_awak_app
 - Pasang dependensi:
   - flutter pub get
