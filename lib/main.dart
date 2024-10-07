@@ -21,6 +21,7 @@ class MyApp extends StatelessWidget {
     return StoreProvider<AppState>(
       store: store,
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Tulisan Awak',
         theme: ThemeData(
           primarySwatch: Colors.blue,
