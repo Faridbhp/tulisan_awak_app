@@ -1,7 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:intl/intl.dart';
 import 'package:tulisan_awak_app/actions/actions.dart';
 import 'package:tulisan_awak_app/components/alert_dialog.dart';
 import 'package:tulisan_awak_app/models/note.dart';
@@ -23,6 +22,9 @@ class _NotePageState extends State<NotePage> {
   bool isPinned = false;
   var uuid = Uuid().v4();
   String keyData = '';
+  DateTime dateTimeNow = DateTime.now();
+  // Format tanggal dan waktu
+  String formattedDate = "";
 
   @override
   void initState() {
@@ -34,6 +36,8 @@ class _NotePageState extends State<NotePage> {
     isArsip = widget.note?.isArsip ?? false;
     isPinned = widget.note?.isPinned ?? false;
     keyData = widget.note?.keyData ?? Uuid().v4();
+    formattedDate = DateFormat('dd MMM yyyy HH:mm')
+        .format(widget.note?.updateTime ?? DateTime.now());
   }
 
   @override
@@ -46,12 +50,12 @@ class _NotePageState extends State<NotePage> {
 
   void saveData() {
     final note = Note(
-      keyData: keyData,
-      title: titleController.text,
-      content: noteController.text,
-      isArsip: isArsip,
-      isPinned: isPinned,
-    );
+        keyData: keyData,
+        title: titleController.text,
+        content: noteController.text,
+        isArsip: isArsip,
+        isPinned: isPinned,
+        updateTime: dateTimeNow);
 
     if (widget.note != null) {
       // Jika keyData ada, update catatan
@@ -66,12 +70,11 @@ class _NotePageState extends State<NotePage> {
 
   @override
   Widget build(BuildContext context) {
-    stderr.writeln('notess data $uuid');
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.lightBlue,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back, color: Colors.white,),
           onPressed: saveData,
         ),
         actions: [
@@ -144,11 +147,12 @@ class _NotePageState extends State<NotePage> {
                 decoration: InputDecoration(
                   hintText: 'Judul', // Placeholder for title
                   border: InputBorder.none,
-                  hintStyle: TextStyle(fontSize: 28),
+                  hintStyle: TextStyle(fontSize: 20),
                 ),
-                style: TextStyle(fontSize: 28),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 maxLines: null, // Allow multiple lines
-                textAlignVertical: TextAlignVertical.top, // Align text to the top
+                textAlignVertical:
+                    TextAlignVertical.top, // Align text to the top
               ),
               SizedBox(height: 10),
               TextField(
@@ -156,46 +160,24 @@ class _NotePageState extends State<NotePage> {
                 decoration: InputDecoration(
                   hintText: 'Catatan', // Placeholder for note content
                   border: InputBorder.none,
-                  hintStyle: TextStyle(fontSize: 18),
+                  hintStyle: TextStyle(fontSize: 16),
                 ),
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: 14),
                 maxLines: null, // Allows multiple lines
               ),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.lightBlue,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  IconButton(
-                    icon: Icon(Icons.add_box_outlined, color: Colors.white),
-                    onPressed: () {
-                      // Action for add icon
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.palette_outlined, color: Colors.white),
-                    onPressed: () {
-                      // Action for palette icon
-                    },
-                  ),
-                ],
-              ),
-              Text('Diedit 11.46', style: TextStyle(color: Colors.white54)),
-              IconButton(
-                icon: Icon(Icons.more_vert, color: Colors.white),
-                onPressed: () {
-                  // Action for more options
-                },
-              ),
-            ],
+      bottomNavigationBar: ClipRRect(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        child: BottomAppBar(
+          color: Colors.lightBlue,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Center(
+                child: Text('Diedit: $formattedDate',
+                    style: TextStyle(color: Colors.white))),
           ),
         ),
       ),
