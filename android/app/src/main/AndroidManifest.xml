@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="tulisan_awak_app"
+        android:label="Tuwak"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
