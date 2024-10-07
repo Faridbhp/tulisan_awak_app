@@ -7,23 +7,38 @@ import 'package:tulisan_awak_app/pages/drawer.dart';
 import 'package:tulisan_awak_app/pages/note_page.dart';
 import 'package:tulisan_awak_app/state/app_state.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  String searchQuery = '';
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, List<Note>>(
       converter: (store) => store.state.notes, // Get notes from the store
       builder: (context, notes) {
-        final filteredNotes = notes.where((note) => !note.isArsip).toList();
+        // cari data yang tidak di arsipkan
+        final filterDataNotArsip =
+            notes.where((note) => !note.isArsip).toList();
+        // cari data yang di pin
         final pinnedNotes =
-            filteredNotes.where((note) => note.isPinned).toList();
+            filterDataNotArsip.where((note) => note.isPinned).toList();
+        // cari data yang tidak di pin
         final unpinnedNotes =
-            filteredNotes.where((note) => !note.isPinned).toList();
-        final allNotes = [
+            filterDataNotArsip.where((note) => !note.isPinned).toList();
+
+        var allNotes = [
           ...pinnedNotes,
           ...unpinnedNotes
-        ]; // Gabungkan catatan yang dipinned dan tidak dipinned
+        ] // Gabungkan catatan yang dipinned dan tidak dipinned
+            .where((note) =>
+                note.title.toLowerCase().contains(searchQuery.toLowerCase()) ||
+                note.content.toLowerCase().contains(searchQuery.toLowerCase()))
+            .toList(); // filter data sesuai dengan query pencarian
 
         return Scaffold(
           appBar: AppBar(
@@ -32,7 +47,6 @@ class HomePage extends StatelessWidget {
               decoration: BoxDecoration(
                   color: Colors.lightBlue,
                   borderRadius: BorderRadius.circular(10)),
-              margin: EdgeInsets.symmetric(horizontal: 8, vertical: 5),
               child: Row(
                 children: [
                   Builder(
@@ -48,9 +62,22 @@ class HomePage extends StatelessWidget {
                       );
                     },
                   ),
-                  Text(
-                    'Tulisan Awak App',
-                    style: TextStyle(color: Colors.white),
+                  Expanded(
+                    child: TextField(
+                      onChanged: (value) {
+                        setState(() {
+                          // Update search query
+                          searchQuery = value;
+                        });
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'Search...',
+                        hintStyle: TextStyle(color: Colors.white70),
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(vertical: 10),
+                      ),
+                      style: TextStyle(color: Colors.white),
+                    ),
                   ),
                 ],
               ),
@@ -63,24 +90,34 @@ class HomePage extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(Icons.lightbulb_outline,
-                          size: 100, color: Colors.white70),
+                          size: 80, color: Colors.black),
                       SizedBox(height: 20),
-                      Text('Catatan yang Anda tambahkan muncul di sini'),
+                      SizedBox(
+                        width: 250,
+                        child: Text(
+                          'Catatan yang Anda tambahkan muncul di sini',
+                          textAlign: TextAlign.center,
+                          softWrap: true, // Memungkinkan teks membungkus
+                        ),
+                      ),
                     ],
                   ),
                 )
               : LayoutBuilder(
                   builder: (BuildContext context, BoxConstraints constraints) {
                     if (constraints.maxWidth <= 500) {
-                      return ListView.builder(
-                        itemCount: filteredNotes.length,
-                        itemBuilder: (context, index) {
-                          final note = filteredNotes[index];
-                          return NoteCard(
-                            note: note,
-                            index: index,
-                          );
-                        },
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 30),
+                        child: ListView.builder(
+                          itemCount: allNotes.length,
+                          itemBuilder: (context, index) {
+                            final note = allNotes[index];
+                            return NoteCard(
+                              note: note,
+                              index: index,
+                            );
+                          },
+                        ),
                       );
                     } else if (constraints.maxWidth <= 700) {
                       return GridCard(
@@ -100,26 +137,23 @@ class HomePage extends StatelessWidget {
                     }
                   },
                 ),
-          bottomNavigationBar: BottomAppBar(
-            color: Colors.lightBlue,
+          bottomNavigationBar: ClipRRect(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            child: BottomAppBar(
+              color: Colors.lightBlue,
+            ),
           ),
           floatingActionButton: Container(
             decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(25),
-                    bottomRight: Radius.circular(25))),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(25),
+            ),
             padding: EdgeInsets.all(8),
-            margin: EdgeInsets.only(right: 20),
+            margin: EdgeInsets.only(right: 20, top: 10),
             child: FloatingActionButton(
               backgroundColor: Colors.lightBlue,
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) {
-                    return NotePage();
-                  }),
-                );
+                 Navigator.of(context).push(_createRoute());
               },
               child: Icon(Icons.add, color: Colors.white),
             ),
@@ -130,4 +164,23 @@ class HomePage extends StatelessWidget {
       },
     );
   }
+}
+
+
+Route _createRoute() {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) => const NotePage(),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      const begin = Offset(1.0, 0.0);
+      const end = Offset.zero;
+      const curve = Curves.ease;
+
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  );
 }
