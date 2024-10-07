@@ -1,12 +1,15 @@
 // reducers.dart
 import 'package:tulisan_awak_app/actions/actions.dart';
+import 'package:tulisan_awak_app/local_storage/local_storage.dart';
 import 'package:tulisan_awak_app/models/note.dart';
 import 'package:tulisan_awak_app/state/app_state.dart';
 
 AppState appReducer(AppState state, dynamic action) {
   if (action is AddNoteAction) {
     // Tambah catatan baru
-    return AppState(notes: List.from(state.notes)..add(action.note));
+    List<Note> updatedNotes = List.from(state.notes)..add(action.note);
+    saveNotesToLocalStorage(updatedNotes); // Simpan ke localStorage
+    return AppState(notes: updatedNotes);
   } else if (action is UpdateNoteAction) {
     List<Note> updatedNotes = List.from(state.notes);
 
@@ -19,6 +22,7 @@ AppState appReducer(AppState state, dynamic action) {
       updatedNotes[noteIndex] = action.updatedNote;
     }
 
+    saveNotesToLocalStorage(updatedNotes); // Simpan ke localStorage
     return AppState(notes: updatedNotes);
   } else if (action is DeleteNoteAction) {
     // Salin daftar catatan
@@ -33,7 +37,7 @@ AppState appReducer(AppState state, dynamic action) {
       updatedNotes.removeAt(noteIndex);
     }
 
-    // Kembalikan state dengan daftar catatan yang diperbarui
+    saveNotesToLocalStorage(updatedNotes); // Simpan ke localStorage
     return AppState(notes: updatedNotes);
   }
 
