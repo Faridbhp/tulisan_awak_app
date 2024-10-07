@@ -1,6 +1,6 @@
 {
-    "name": "tulisan_awak_app",
-    "short_name": "tulisan_awak_app",
+    "name": "Tulisan Awak Web",
+    "short_name": "Tuwak",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
