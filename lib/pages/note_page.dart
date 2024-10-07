@@ -238,7 +238,6 @@ class _NotePageState extends State<NotePage> {
                     setState(() {
                       selectedColor = color; // Simpan warna yang dipilih
                     });
-                    print("Warna dipilih: $color");
                   },
                 ),
                 SizedBox(height: 20),
@@ -251,7 +250,6 @@ class _NotePageState extends State<NotePage> {
                     setState(() {
                       selectedColor = color; // Simpan warna yang dipilih
                     });
-                    print("Warna dipilih: $color");
                   },
                   pickerAreaHeightPercent: 0.8,
                 ),
