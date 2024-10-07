@@ -16,12 +16,55 @@ class DrawerPage extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.lightBlue,
             ),
-            child: Text(
-              'Menu',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-              ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 80, // Adjust the size as needed
+                          height: 80,
+                          decoration: BoxDecoration(
+                            color:
+                                Colors.blue, // Background color of the circle
+                            shape:
+                                BoxShape.circle, // Makes the container circular
+                            border: Border.all(width: 1, color: Colors.black26),
+                          ),
+                          alignment: Alignment
+                              .center, // Centers the text inside the circle
+                          child: Text(
+                            "Tuwak",
+                            style: TextStyle(
+                              color: Colors.black, // Text color
+                              fontSize: 20, // Adjust font size as needed
+                              fontWeight:
+                                  FontWeight.bold, // Makes the text bold
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Text("Tulisan Awak")
+                      ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8, top: 10),
+                      child: Text(
+                        'Menu',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
           ListTile(
