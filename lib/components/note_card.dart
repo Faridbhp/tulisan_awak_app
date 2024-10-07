@@ -14,7 +14,14 @@ class NoteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Color lingtOrDark =
+        note.color != Colors.white ? Colors.white : Colors.black;
     return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10), // Mengatur sudut kartu
+      ),
+      color: note.color,
       margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: InkWell(
         onTap: () {
@@ -41,6 +48,7 @@ class NoteCard extends StatelessWidget {
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
+                        color: lingtOrDark,
                       ),
                     ),
                     SizedBox(height: 8),
@@ -48,7 +56,10 @@ class NoteCard extends StatelessWidget {
                       note.content,
                       maxLines: 3, // Membolehkan teks lebih dari satu baris
                       overflow: TextOverflow.ellipsis, // Teks bisa meluap
-                      style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                      style: TextStyle(
+                        color: lingtOrDark,
+                        fontSize: 14,
+                      ),
                     ),
                   ],
                 ),
