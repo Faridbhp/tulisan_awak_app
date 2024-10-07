@@ -1,7 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:tulisan_awak_app/components/grid_card.dart';
 import 'package:tulisan_awak_app/components/note_card.dart';
 import 'package:tulisan_awak_app/models/note.dart';
 import 'package:tulisan_awak_app/pages/drawer.dart';
@@ -17,7 +16,15 @@ class HomePage extends StatelessWidget {
       converter: (store) => store.state.notes, // Get notes from the store
       builder: (context, notes) {
         final filteredNotes = notes.where((note) => !note.isArsip).toList();
-        stderr.writeln('notelist $notes');
+        final pinnedNotes =
+            filteredNotes.where((note) => note.isPinned).toList();
+        final unpinnedNotes =
+            filteredNotes.where((note) => !note.isPinned).toList();
+        final allNotes = [
+          ...pinnedNotes,
+          ...unpinnedNotes
+        ]; // Gabungkan catatan yang dipinned dan tidak dipinned
+
         return Scaffold(
           appBar: AppBar(
             automaticallyImplyLeading: false,
@@ -42,7 +49,7 @@ class HomePage extends StatelessWidget {
                     },
                   ),
                   Text(
-                    'Telusuri catatan Anda',
+                    'Tulisan Awak App',
                     style: TextStyle(color: Colors.white),
                   ),
                 ],
@@ -62,38 +69,39 @@ class HomePage extends StatelessWidget {
                     ],
                   ),
                 )
-              : ListView.builder(
-                  itemCount: filteredNotes.length,
-                  itemBuilder: (context, index) {
-                    final note = filteredNotes[index];
-                    return NoteCard(
-                      note: note,
-                      index: index,
-                    );
+              : LayoutBuilder(
+                  builder: (BuildContext context, BoxConstraints constraints) {
+                    if (constraints.maxWidth <= 500) {
+                      return ListView.builder(
+                        itemCount: filteredNotes.length,
+                        itemBuilder: (context, index) {
+                          final note = filteredNotes[index];
+                          return NoteCard(
+                            note: note,
+                            index: index,
+                          );
+                        },
+                      );
+                    } else if (constraints.maxWidth <= 700) {
+                      return GridCard(
+                        allNotes: allNotes,
+                        gridCount: 2,
+                      );
+                    } else if (constraints.maxWidth <= 1000) {
+                      return GridCard(
+                        allNotes: allNotes,
+                        gridCount: 3,
+                      );
+                    } else {
+                      return GridCard(
+                        allNotes: allNotes,
+                        gridCount: 5,
+                      );
+                    }
                   },
                 ),
           bottomNavigationBar: BottomAppBar(
             color: Colors.lightBlue,
-            child: Row(
-              children: [
-                IconButton(
-                  icon: Icon(Icons.check_box_outlined, color: Colors.white),
-                  onPressed: () {},
-                ),
-                IconButton(
-                  icon: Icon(Icons.brush_outlined, color: Colors.white),
-                  onPressed: () {},
-                ),
-                IconButton(
-                  icon: Icon(Icons.mic_outlined, color: Colors.white),
-                  onPressed: () {},
-                ),
-                IconButton(
-                  icon: Icon(Icons.image_outlined, color: Colors.white),
-                  onPressed: () {},
-                ),
-              ],
-            ),
           ),
           floatingActionButton: Container(
             decoration: BoxDecoration(

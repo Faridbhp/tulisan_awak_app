@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:tulisan_awak_app/components/grid_card.dart';
 import 'package:tulisan_awak_app/components/note_card.dart';
 import 'package:tulisan_awak_app/models/note.dart';
 import 'package:tulisan_awak_app/pages/drawer.dart';
@@ -59,14 +60,35 @@ class ArchivePage extends StatelessWidget {
                     ],
                   ),
                 )
-              : ListView.builder(
-                  itemCount: filteredNotes.length,
-                  itemBuilder: (context, index) {
-                    final note = filteredNotes[index];
-                    return NoteCard(
-                      note: note,
-                      index: index,
-                    );
+              : LayoutBuilder(
+                  builder: (BuildContext context, BoxConstraints constraints) {
+                    if (constraints.maxWidth <= 500) {
+                      return ListView.builder(
+                        itemCount: filteredNotes.length,
+                        itemBuilder: (context, index) {
+                          final note = filteredNotes[index];
+                          return NoteCard(
+                            note: note,
+                            index: index,
+                          );
+                        },
+                      );
+                    } else if (constraints.maxWidth <= 700) {
+                      return GridCard(
+                        allNotes: filteredNotes,
+                        gridCount: 2,
+                      );
+                    } else if (constraints.maxWidth <= 1000) {
+                      return GridCard(
+                        allNotes: filteredNotes,
+                        gridCount: 3,
+                      );
+                    } else {
+                      return GridCard(
+                        allNotes: filteredNotes,
+                        gridCount: 5,
+                      );
+                    }
                   },
                 ),
         );
