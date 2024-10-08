@@ -4,7 +4,6 @@ import 'package:tulisan_awak_app/components/grid_card.dart';
 import 'package:tulisan_awak_app/components/note_card.dart';
 import 'package:tulisan_awak_app/constants/constants.dart';
 import 'package:tulisan_awak_app/redux/models/model_store.dart';
-import 'package:tulisan_awak_app/redux/models/note.dart';
 import 'package:tulisan_awak_app/pages/drawer.dart';
 import 'package:tulisan_awak_app/redux/state/app_state.dart';
 
@@ -24,17 +23,17 @@ class ArchivePage extends StatelessWidget {
             storeData.theme == 'Light' ? ColorStore.light : ColorStore.dark;
         Color lingtOrDark = colorScheme.backgroundColor;
         Color textColor = colorScheme.textColor;
-        double fontSize = 18;
+        FontStore fontSize;
 
         switch (storeData.fontSize) {
           case "Extra Small":
-            fontSize = 14;
+            fontSize = FontStore.exstraSmall;
             break;
           case "Big":
-            fontSize = 22;
+            fontSize = FontStore.big;
             break;
           default:
-            fontSize = 18;
+            fontSize = FontStore.small;
         }
 
         final filteredNotes =
@@ -68,7 +67,7 @@ class ArchivePage extends StatelessWidget {
                     'Arsip',
                     style: TextStyle(
                         color: Colors.white,
-                        fontSize: 18,
+                        fontSize: fontSize.fontHeader,
                         fontWeight: FontWeight.bold),
                   ),
                 ),
@@ -90,7 +89,7 @@ class ArchivePage extends StatelessWidget {
                           textAlign: TextAlign.center,
                           softWrap: true,
                           style: TextStyle(
-                            fontSize: fontSize - 2,
+                            fontSize: fontSize.fontHeader,
                             color: textColor,
                           ),
                         ),

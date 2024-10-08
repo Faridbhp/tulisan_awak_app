@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:intl/intl.dart';
+import 'package:tulisan_awak_app/constants/constants.dart';
 import 'package:tulisan_awak_app/redux/actions/actions.dart';
 import 'package:tulisan_awak_app/components/alert_dialog.dart';
+import 'package:tulisan_awak_app/redux/models/model_store.dart';
 import 'package:tulisan_awak_app/redux/models/note.dart';
 import 'package:tulisan_awak_app/redux/state/app_state.dart';
 import 'package:uuid/uuid.dart';
@@ -79,146 +81,175 @@ class _NotePageState extends State<NotePage> {
     Color lingtOrDark =
         selectedColor != Colors.white ? Colors.white : Colors.black;
 
-    return Scaffold(
-      backgroundColor: selectedColor,
-      appBar: AppBar(
-        backgroundColor: selectedColor,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color: lingtOrDark,
-          ),
-          onPressed: saveData,
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(
-              isPinned ? Icons.push_pin : Icons.push_pin_outlined,
-              color: lingtOrDark,
-            ),
-            onPressed: () {
-              setState(() {
-                isPinned = !isPinned;
-              });
-            },
-          ),
-          IconButton(
-            icon: Icon(
-              isArsip ? Icons.unarchive_outlined : Icons.archive_outlined,
-              color: lingtOrDark,
-            ),
-            // Action for archive icon
-            onPressed: () {
-              setState(() {
-                isArsip = !isArsip;
-              });
+    return StoreConnector<AppState, Settings>(
+      converter: (store) => Settings(
+        store.state.theme,
+        store.state.fontSize,
+      ),
+      builder: (context, storeData) {
+        FontStore fontSize;
 
-              // Show dialog
-              showDialog(
-                barrierDismissible: false,
-                context: context,
-                builder: (context) {
-                  Future.delayed(Duration(seconds: 1), () {
-                    Navigator.of(context).pop(); // Dismiss the dialog
-                  });
+        switch (storeData.fontSize) {
+          case "Extra Small":
+            fontSize = FontStore.exstraSmall;
+            break;
+          case "Big":
+            fontSize = FontStore.big;
+            break;
+          default:
+            fontSize = FontStore.small;
+        }
 
-                  return CustomAlertDialog(
-                    title: isArsip ? "Berhasil!" : "Dibatalkan",
-                    message: isArsip
-                        ? "Catatan berhasil diarsipkan"
-                        : "Pengarsipan catatan dibatalkan",
-                    icon: isArsip ? Icons.check_circle : Icons.cancel,
-                    iconColor: isArsip ? Colors.green : Colors.red,
-                  );
-                },
-              );
-            },
-          ),
-          if (widget.note != null) ...[
-            IconButton(
+        return Scaffold(
+          backgroundColor: selectedColor,
+          appBar: AppBar(
+            backgroundColor: selectedColor,
+            leading: IconButton(
+              icon: Icon(
+                Icons.arrow_back,
+                color: lingtOrDark,
+              ),
+              onPressed: saveData,
+            ),
+            actions: [
+              IconButton(
                 icon: Icon(
-                  Icons.delete,
+                  isPinned ? Icons.push_pin : Icons.push_pin_outlined,
                   color: lingtOrDark,
                 ),
                 onPressed: () {
-                  // Dispatch aksi untuk menghapus catatan
-                  StoreProvider.of<AppState>(context)
-                      .dispatch(DeleteNoteAction(widget.note!.keyData));
-                  Navigator.pop(context); // Tutup dialog setelah menghapus
-                }),
-          ]
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0), // Padding around content
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextField(
-                controller: titleController, // Bind to titleController
-                decoration: InputDecoration(
-                  hintText: 'Judul', // Placeholder for title
-                  border: InputBorder.none,
-                  hintStyle: TextStyle(fontSize: 20, color: lingtOrDark),
-                ),
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: lingtOrDark),
-                maxLines: null, // Allow multiple lines
-                textAlignVertical:
-                    TextAlignVertical.top, // Align text to the top
+                  setState(() {
+                    isPinned = !isPinned;
+                  });
+                },
               ),
-              SizedBox(height: 10),
-              TextField(
-                controller: noteController, // Bind to noteController
-                decoration: InputDecoration(
-                  hintText: 'Catatan', // Placeholder for note content
-                  border: InputBorder.none,
-                  hintStyle: TextStyle(fontSize: 16, color: lingtOrDark),
+              IconButton(
+                icon: Icon(
+                  isArsip ? Icons.unarchive_outlined : Icons.archive_outlined,
+                  color: lingtOrDark,
                 ),
-                style: TextStyle(fontSize: 14, color: lingtOrDark),
-                maxLines: null, // Allows multiple lines
+                // Action for archive icon
+                onPressed: () {
+                  setState(() {
+                    isArsip = !isArsip;
+                  });
+
+                  // Show dialog
+                  showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (context) {
+                      Future.delayed(Duration(seconds: 1), () {
+                        Navigator.of(context).pop(); // Dismiss the dialog
+                      });
+
+                      return CustomAlertDialog(
+                        title: isArsip ? "Berhasil!" : "Dibatalkan",
+                        message: isArsip
+                            ? "Catatan berhasil diarsipkan"
+                            : "Pengarsipan catatan dibatalkan",
+                        icon: isArsip ? Icons.check_circle : Icons.cancel,
+                        iconColor: isArsip ? Colors.green : Colors.red,
+                      );
+                    },
+                  );
+                },
               ),
+              if (widget.note != null) ...[
+                IconButton(
+                    icon: Icon(
+                      Icons.delete,
+                      color: lingtOrDark,
+                    ),
+                    onPressed: () {
+                      // Dispatch aksi untuk menghapus catatan
+                      StoreProvider.of<AppState>(context)
+                          .dispatch(DeleteNoteAction(widget.note!.keyData));
+                      Navigator.pop(context); // Tutup dialog setelah menghapus
+                    }),
+              ]
             ],
           ),
-        ),
-      ),
-      bottomNavigationBar: ClipRRect(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        child: BottomAppBar(
-          color: selectedColor,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment
-                  .spaceBetween, // Menjaga jarak antara ikon dan teks
-              children: [
-                Row(
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        Icons.palette_outlined,
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0), // Padding around content
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TextField(
+                    controller: titleController, // Bind to titleController
+                    decoration: InputDecoration(
+                      hintText: 'Judul', // Placeholder for title
+                      border: InputBorder.none,
+                      hintStyle:
+                          TextStyle(fontSize: fontSize.fontHeader, color: lingtOrDark),
+                    ),
+                    style: TextStyle(
+                        fontSize: fontSize.fontHeader,
+                        fontWeight: FontWeight.bold,
+                        color: lingtOrDark),
+                    maxLines: null, // Allow multiple lines
+                    textAlignVertical:
+                        TextAlignVertical.top, // Align text to the top
+                  ),
+                  SizedBox(height: 10),
+                  TextField(
+                    controller: noteController, // Bind to noteController
+                    decoration: InputDecoration(
+                      hintText: 'Catatan', // Placeholder for note content
+                      border: InputBorder.none,
+                      hintStyle: TextStyle(
+                        fontSize: fontSize.fontContent,
                         color: lingtOrDark,
                       ),
-                      onPressed: () {
-                        _showColorPicker(context);
-                      },
                     ),
-                  ],
-                ),
-                // Memposisikan teks di tengah
-                Text(
-                  'Diedit: $formattedDate',
-                  style: TextStyle(color: lingtOrDark),
-                ),
-                SizedBox()
-              ],
+                    style: TextStyle(
+                      fontSize: fontSize.fontContent,
+                      color: lingtOrDark,
+                    ),
+                    maxLines: null, // Allows multiple lines
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      ),
+          bottomNavigationBar: ClipRRect(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+            child: BottomAppBar(
+              color: selectedColor,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment
+                      .spaceBetween, // Menjaga jarak antara ikon dan teks
+                  children: [
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            Icons.palette_outlined,
+                            color: lingtOrDark,
+                          ),
+                          onPressed: () {
+                            _showColorPicker(context);
+                          },
+                        ),
+                      ],
+                    ),
+                    // Memposisikan teks di tengah
+                    Text(
+                      'Diedit: $formattedDate',
+                      style:
+                          TextStyle(color: lingtOrDark, fontSize: fontSize.fontContent - 4),
+                    ),
+                    SizedBox()
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -270,7 +301,8 @@ class _NotePageState extends State<NotePage> {
               child: Text('Default'), // Tombol untuk mengatur warna Default
               onPressed: () {
                 setState(() {
-                  selectedColor = Colors.lightBlue; // Set warna menjadi lightBlue
+                  selectedColor =
+                      Colors.lightBlue; // Set warna menjadi lightBlue
                 });
                 Navigator.of(context).pop(); // Tutup dialog
               },

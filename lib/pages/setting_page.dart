@@ -32,18 +32,19 @@ class _SettingPageState extends State<SettingPage> {
             _selectedTheme == 'Light' ? ColorStore.light : ColorStore.dark;
         Color lingtOrDark = colorScheme.backgroundColor;
         Color textColor = colorScheme.textColor;
-        double fontSize = 18;
+        FontStore fontSize;
 
-        switch (_selectedFontSize) {
+        switch (settings.fontSize) {
           case "Extra Small":
-            fontSize = 14;
+            fontSize = FontStore.exstraSmall;
             break;
           case "Big":
-            fontSize = 22;
+            fontSize = FontStore.big;
             break;
           default:
-            fontSize = 18;
+            fontSize = FontStore.small;
         }
+
         return Scaffold(
           backgroundColor: lingtOrDark,
           appBar: AppBar(
@@ -61,7 +62,7 @@ class _SettingPageState extends State<SettingPage> {
                       icon: Icon(
                         Icons.menu,
                         color: Colors.white,
-                        size: fontSize - 2,
+                        size: fontSize.fontHeader,
                       ),
                       onPressed: () {
                         Scaffold.of(context).openDrawer(); // Open the drawer
@@ -74,7 +75,7 @@ class _SettingPageState extends State<SettingPage> {
                     'Setting',
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: fontSize - 2,
+                      fontSize: fontSize.fontHeader,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -92,7 +93,7 @@ class _SettingPageState extends State<SettingPage> {
                   Text(
                     "Opsi Tampilan",
                     style: TextStyle(
-                      fontSize: fontSize + 1,
+                      fontSize: fontSize.fontHeader,
                       fontWeight: FontWeight.bold,
                       color: textColor,
                     ),
@@ -104,7 +105,7 @@ class _SettingPageState extends State<SettingPage> {
                       Text(
                         "Tema",
                         style: TextStyle(
-                          fontSize: fontSize - 2,
+                          fontSize: fontSize.fontContent,
                           color: textColor,
                           fontWeight: FontWeight.bold,
                         ),
@@ -162,7 +163,7 @@ class _SettingPageState extends State<SettingPage> {
                                       style: TextStyle(
                                         color:
                                             textColor, // Conditional text color for dropdown items
-                                        fontSize: fontSize - 2,
+                                        fontSize: fontSize.fontContent,
                                       ),
                                     ),
                                   ],
@@ -181,7 +182,7 @@ class _SettingPageState extends State<SettingPage> {
                       Text(
                         "Font Size",
                         style: TextStyle(
-                          fontSize: fontSize - 2,
+                          fontSize: fontSize.fontContent,
                           color: textColor,
                           fontWeight: FontWeight.bold,
                         ),
@@ -240,7 +241,7 @@ class _SettingPageState extends State<SettingPage> {
                                       value,
                                       style: TextStyle(
                                         color: textColor,
-                                        fontSize: fontSize - 2,
+                                        fontSize: fontSize.fontContent,
                                       ),
                                     ),
                                   ],

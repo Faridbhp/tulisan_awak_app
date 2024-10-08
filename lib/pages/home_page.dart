@@ -31,17 +31,17 @@ class _HomePageState extends State<HomePage> {
             storeData.theme == 'Light' ? ColorStore.light : ColorStore.dark;
         Color lingtOrDark = colorScheme.backgroundColor;
         Color textColor = colorScheme.textColor;
-        double fontSize = 18;
+        FontStore fontSize;
 
         switch (storeData.fontSize) {
           case "Extra Small":
-            fontSize = 14;
+            fontSize = FontStore.exstraSmall;
             break;
           case "Big":
-            fontSize = 22;
+            fontSize = FontStore.big;
             break;
           default:
-            fontSize = 18;
+            fontSize = FontStore.small;
         }
 
         // cari data yang tidak di arsipkan
@@ -80,7 +80,7 @@ class _HomePageState extends State<HomePage> {
                         icon: Icon(
                           Icons.menu,
                           color: Colors.white,
-                          size: fontSize - 2,
+                          size: fontSize.fontHeader,
                         ),
                         onPressed: () {
                           Scaffold.of(context).openDrawer(); // Open the drawer
@@ -103,7 +103,7 @@ class _HomePageState extends State<HomePage> {
                         contentPadding: EdgeInsets.symmetric(vertical: 10),
                       ),
                       style: TextStyle(
-                          color: Colors.white, fontSize: fontSize - 2),
+                          color: Colors.white, fontSize: fontSize.fontHeader),
                     ),
                   ),
                 ],
@@ -125,7 +125,7 @@ class _HomePageState extends State<HomePage> {
                           textAlign: TextAlign.center,
                           softWrap: true,
                           style: TextStyle(
-                            fontSize: fontSize - 2,
+                            fontSize: fontSize.fontHeader,
                             color: textColor,
                           ),
                         ),

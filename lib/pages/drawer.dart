@@ -24,17 +24,17 @@ class DrawerPage extends StatelessWidget {
             storeData.theme == 'Light' ? ColorStore.light : ColorStore.dark;
         Color lingtOrDark = colorScheme.backgroundColor;
         Color textColor = colorScheme.textColor;
-        double fontSize = 18;
+        FontStore fontSize;
 
         switch (storeData.fontSize) {
           case "Extra Small":
-            fontSize = 14;
+            fontSize = FontStore.exstraSmall;
             break;
           case "Big":
-            fontSize = 22;
+            fontSize = FontStore.big;
             break;
           default:
-            fontSize = 18;
+            fontSize = FontStore.small;
         }
 
         return Drawer(
@@ -83,7 +83,7 @@ class DrawerPage extends StatelessWidget {
                             ),
                             Text(
                               "Tulisan Awak",
-                              style: TextStyle(fontSize: fontSize),
+                              style: TextStyle(fontSize: fontSize.fontTitle),
                             )
                           ],
                         ),
@@ -93,7 +93,7 @@ class DrawerPage extends StatelessWidget {
                             'Menu',
                             style: TextStyle(
                                 color: Colors.black,
-                                fontSize: fontSize + 4,
+                                fontSize: fontSize.fontTitle,
                                 fontWeight: FontWeight.bold),
                           ),
                         ),
@@ -106,12 +106,13 @@ class DrawerPage extends StatelessWidget {
                 leading: Icon(
                   Icons.home,
                   color: textColor,
+                  size: fontSize.fontTitle,
                 ),
                 title: Text(
                   'Beranda',
                   style: TextStyle(
                     color: textColor,
-                    fontSize: fontSize,
+                    fontSize: fontSize.fontHeader,
                   ),
                 ),
                 onTap: () {
@@ -124,12 +125,13 @@ class DrawerPage extends StatelessWidget {
                 leading: Icon(
                   Icons.archive,
                   color: textColor,
+                  size: fontSize.fontTitle,
                 ),
                 title: Text(
                   'Arsip',
                   style: TextStyle(
                     color: textColor,
-                    fontSize: fontSize,
+                    fontSize: fontSize.fontHeader,
                   ),
                 ),
                 onTap: () {
@@ -143,12 +145,13 @@ class DrawerPage extends StatelessWidget {
                 leading: Icon(
                   Icons.settings,
                   color: textColor,
+                  size: fontSize.fontTitle,
                 ),
                 title: Text(
                   'Pengaturan',
                   style: TextStyle(
                     color: textColor,
-                    fontSize: fontSize,
+                    fontSize: fontSize.fontHeader,
                   ),
                 ),
                 onTap: () {

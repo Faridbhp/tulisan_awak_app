@@ -29,3 +29,36 @@ class ColorStore {
     iconColor: Colors.blue,
   );
 }
+
+class FontStore {
+  final double fontTitle;
+  final double fontHeader;
+  final double fontContent;
+
+  FontStore({
+    required this.fontTitle,
+    required this.fontHeader,
+    required this.fontContent,
+  });
+
+  // Define extra small font
+  static FontStore exstraSmall = FontStore(
+    fontTitle: 18,
+    fontHeader: 16,
+    fontContent: 14,
+  );
+
+  // Define small font
+  static FontStore small = FontStore(
+    fontTitle: 20,
+    fontHeader: 18,
+    fontContent: 16,
+  );
+
+  // Define big font
+  static FontStore big = FontStore(
+    fontTitle: 22,
+    fontHeader: 20,
+    fontContent: 18,
+  );
+}

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:tulisan_awak_app/constants/constants.dart';
 import 'package:tulisan_awak_app/redux/models/model_store.dart';
 import 'package:tulisan_awak_app/redux/models/note.dart';
 import 'package:tulisan_awak_app/pages/note_page.dart';
@@ -20,19 +21,19 @@ class NoteCard extends StatelessWidget {
     return StoreConnector<AppState, Settings>(
       converter: (store) => Settings(store.state.fontSize, store.state.theme),
       builder: (context, storeData) {
-        double fontSize = 18;
+        FontStore fontSize;
         Color lingtOrDark =
             note.color != Colors.white ? Colors.white : Colors.black;
 
         switch (storeData.fontSize) {
           case "Extra Small":
-            fontSize = 14;
+            fontSize = FontStore.exstraSmall;
             break;
           case "Big":
-            fontSize = 22;
+            fontSize = FontStore.big;
             break;
           default:
-            fontSize = 18;
+            fontSize = FontStore.small;
         }
 
         return Card(
@@ -66,7 +67,7 @@ class NoteCard extends StatelessWidget {
                               .ellipsis, // Tambahkan elipsis jika terlalu panjang
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: fontSize - 2,
+                            fontSize: fontSize.fontHeader,
                             color: lingtOrDark,
                           ),
                         ),
@@ -77,7 +78,7 @@ class NoteCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis, // Teks bisa meluap
                           style: TextStyle(
                             color: lingtOrDark,
-                            fontSize: fontSize - 4,
+                            fontSize: fontSize.fontContent,
                           ),
                         ),
                       ],
