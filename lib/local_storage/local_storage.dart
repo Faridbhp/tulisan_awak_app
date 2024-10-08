@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
@@ -16,8 +18,21 @@ Future<List<Note>> loadNotesFromLocalStorage() async {
   List<String>? notesJson = prefs.getStringList('notes');
 
   if (notesJson != null) {
-    return notesJson.map((note) => Note.fromJson(jsonDecode(note))).toList();
+    try {
+      // Attempt to decode each note JSON, handling errors gracefully
+      return notesJson.map((note) {
+        try {
+          return Note.fromJson(jsonDecode(note)); // Decode JSON and convert to Note
+        } catch (e) {
+          print("Error decoding note: $e");
+         return []; // Return empty list if there's an issue decoding a note
+        }
+      }).whereType<Note>().toList(); // Filter out nulls
+    } catch (e) {
+      print("Error loading notes from SharedPreferences: $e");
+      return []; // Return empty list 
+    }
   }
 
-  return [];
+  return []; // Return an empty list if no notes found or if there's an error
 }
