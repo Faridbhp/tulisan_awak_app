@@ -1,5 +1,5 @@
 // actions.dart
-import 'package:tulisan_awak_app/models/note.dart';
+import 'package:tulisan_awak_app/redux/models/note.dart';
 
 class AddNoteAction {
   final Note note;
@@ -17,4 +17,16 @@ class DeleteNoteAction {
   final String keyData;
 
   DeleteNoteAction(this.keyData);
+}
+
+class ChangeThemeAction {
+  final String theme;
+
+  ChangeThemeAction(this.theme);
+}
+
+class ChangeFontSizeAction {
+  final String fontSize;
+
+  ChangeFontSizeAction(this.fontSize);
 }

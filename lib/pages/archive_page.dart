@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:tulisan_awak_app/components/grid_card.dart';
 import 'package:tulisan_awak_app/components/note_card.dart';
-import 'package:tulisan_awak_app/models/note.dart';
+import 'package:tulisan_awak_app/redux/models/note.dart';
 import 'package:tulisan_awak_app/pages/drawer.dart';
-import 'package:tulisan_awak_app/state/app_state.dart';
+import 'package:tulisan_awak_app/redux/state/app_state.dart';
 
 class ArchivePage extends StatelessWidget {
   const ArchivePage({super.key});

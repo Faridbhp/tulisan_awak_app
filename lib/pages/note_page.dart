@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:intl/intl.dart';
-import 'package:tulisan_awak_app/actions/actions.dart';
+import 'package:tulisan_awak_app/redux/actions/actions.dart';
 import 'package:tulisan_awak_app/components/alert_dialog.dart';
-import 'package:tulisan_awak_app/models/note.dart';
-import 'package:tulisan_awak_app/state/app_state.dart';
+import 'package:tulisan_awak_app/redux/models/note.dart';
+import 'package:tulisan_awak_app/redux/state/app_state.dart';
 import 'package:uuid/uuid.dart';
 
 class NotePage extends StatefulWidget {

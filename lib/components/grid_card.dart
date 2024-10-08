@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tulisan_awak_app/components/note_card.dart';
-import 'package:tulisan_awak_app/models/note.dart';
+import 'package:tulisan_awak_app/redux/models/note.dart';
 
 class GridCard extends StatelessWidget {
   final List<Note> allNotes; // Change to List<Note>

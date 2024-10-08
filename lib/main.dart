@@ -3,16 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
 import 'package:tulisan_awak_app/local_storage/local_storage.dart';
-import 'package:tulisan_awak_app/reducers/reducers.dart';
-import 'package:tulisan_awak_app/state/app_state.dart';
+import 'package:tulisan_awak_app/redux/reducers/reducers.dart';
+import 'package:tulisan_awak_app/redux/state/app_state.dart';
 import 'pages/home_page.dart';
 
+Future<Store<AppState>> createStore() async {
+  final initialState = AppState(notes: await loadNotesFromLocalStorage());
+  return Store<AppState>(appReducer, initialState: initialState);
+}
+
 void main() async {
-  // Pastikan untuk menjalankan FlutterBinding sebelum menggunakan async
   WidgetsFlutterBinding.ensureInitialized();
 
-  final store = Store<AppState>(appReducer,
-      initialState: AppState(notes: await loadNotesFromLocalStorage()));
+  final store = await createStore();
 
   runApp(MyApp(store: store));
 }

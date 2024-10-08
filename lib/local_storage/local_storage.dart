@@ -3,7 +3,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
-import 'package:tulisan_awak_app/models/note.dart'; // For encoding/decoding JSON
+import 'package:tulisan_awak_app/redux/models/note.dart'; // For encoding/decoding JSON
 
 // Fungsi untuk menyimpan catatan ke SharedPreferences
 Future<void> saveNotesToLocalStorage(List<Note> notes) async {
