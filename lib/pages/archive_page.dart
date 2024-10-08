@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:tulisan_awak_app/components/grid_card.dart';
 import 'package:tulisan_awak_app/components/note_card.dart';
+import 'package:tulisan_awak_app/constants/constants.dart';
+import 'package:tulisan_awak_app/redux/models/model_store.dart';
 import 'package:tulisan_awak_app/redux/models/note.dart';
 import 'package:tulisan_awak_app/pages/drawer.dart';
 import 'package:tulisan_awak_app/redux/state/app_state.dart';
@@ -11,12 +13,36 @@ class ArchivePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StoreConnector<AppState, List<Note>>(
-      converter: (store) => store.state.notes, // Get notes from the store
-      builder: (context, notes) {
-        final filteredNotes = notes.where((note) => note.isArsip).toList();
+    return StoreConnector<AppState, HomePageStore>(
+      converter: (store) => HomePageStore(
+        store.state.notes,
+        store.state.fontSize,
+        store.state.theme,
+      ), // Get notes from the store
+      builder: (context, storeData) {
+        ColorStore colorScheme =
+            storeData.theme == 'Light' ? ColorStore.light : ColorStore.dark;
+        Color lingtOrDark = colorScheme.backgroundColor;
+        Color textColor = colorScheme.textColor;
+        double fontSize = 18;
+
+        switch (storeData.fontSize) {
+          case "Extra Small":
+            fontSize = 14;
+            break;
+          case "Big":
+            fontSize = 22;
+            break;
+          default:
+            fontSize = 18;
+        }
+
+        final filteredNotes =
+            storeData.notes.where((note) => note.isArsip).toList();
         return Scaffold(
+          backgroundColor: lingtOrDark,
           appBar: AppBar(
+            backgroundColor: lingtOrDark,
             automaticallyImplyLeading: false,
             title: Container(
               decoration: BoxDecoration(
@@ -55,15 +81,18 @@ class ArchivePage extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.lightbulb_outline,
-                          size: 80, color: Colors.black),
+                      Icon(Icons.lightbulb_outline, size: 80, color: textColor),
                       SizedBox(height: 20),
                       SizedBox(
                         width: 250,
                         child: Text(
                           'Arsip yang Anda tambahkan akan muncul di sini',
                           textAlign: TextAlign.center,
-                          softWrap: true, // Memungkinkan teks membungkus
+                          softWrap: true,
+                          style: TextStyle(
+                            fontSize: fontSize - 2,
+                            color: textColor,
+                          ),
                         ),
                       ),
                     ],

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:tulisan_awak_app/components/grid_card.dart';
 import 'package:tulisan_awak_app/components/note_card.dart';
+import 'package:tulisan_awak_app/constants/constants.dart';
+import 'package:tulisan_awak_app/redux/models/model_store.dart';
 import 'package:tulisan_awak_app/redux/models/note.dart';
 import 'package:tulisan_awak_app/pages/drawer.dart';
 import 'package:tulisan_awak_app/pages/note_page.dart';
@@ -18,12 +20,33 @@ class _HomePageState extends State<HomePage> {
   String searchQuery = '';
   @override
   Widget build(BuildContext context) {
-    return StoreConnector<AppState, List<Note>>(
-      converter: (store) => store.state.notes, // Get notes from the store
-      builder: (context, notes) {
+    return StoreConnector<AppState, HomePageStore>(
+      converter: (store) => HomePageStore(
+        store.state.notes,
+        store.state.fontSize,
+        store.state.theme,
+      ),
+      builder: (context, storeData) {
+        ColorStore colorScheme =
+            storeData.theme == 'Light' ? ColorStore.light : ColorStore.dark;
+        Color lingtOrDark = colorScheme.backgroundColor;
+        Color textColor = colorScheme.textColor;
+        double fontSize = 18;
+
+        switch (storeData.fontSize) {
+          case "Extra Small":
+            fontSize = 14;
+            break;
+          case "Big":
+            fontSize = 22;
+            break;
+          default:
+            fontSize = 18;
+        }
+
         // cari data yang tidak di arsipkan
         final filterDataNotArsip =
-            notes.where((note) => !note.isArsip).toList();
+            storeData.notes.where((note) => !note.isArsip).toList();
         // cari data yang di pin
         final pinnedNotes =
             filterDataNotArsip.where((note) => note.isPinned).toList();
@@ -41,7 +64,9 @@ class _HomePageState extends State<HomePage> {
             .toList(); // filter data sesuai dengan query pencarian
 
         return Scaffold(
+          backgroundColor: lingtOrDark,
           appBar: AppBar(
+            backgroundColor: lingtOrDark,
             automaticallyImplyLeading: false,
             title: Container(
               decoration: BoxDecoration(
@@ -55,6 +80,7 @@ class _HomePageState extends State<HomePage> {
                         icon: Icon(
                           Icons.menu,
                           color: Colors.white,
+                          size: fontSize - 2,
                         ),
                         onPressed: () {
                           Scaffold.of(context).openDrawer(); // Open the drawer
@@ -76,7 +102,8 @@ class _HomePageState extends State<HomePage> {
                         border: InputBorder.none,
                         contentPadding: EdgeInsets.symmetric(vertical: 10),
                       ),
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(
+                          color: Colors.white, fontSize: fontSize - 2),
                     ),
                   ),
                 ],
@@ -84,20 +111,23 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           drawer: DrawerPage(),
-          body: notes.isEmpty
+          body: storeData.notes.isEmpty
               ? Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.lightbulb_outline,
-                          size: 80, color: Colors.black),
+                      Icon(Icons.lightbulb_outline, size: 80, color: textColor),
                       SizedBox(height: 20),
                       SizedBox(
                         width: 250,
                         child: Text(
                           'Catatan yang Anda tambahkan muncul di sini',
                           textAlign: TextAlign.center,
-                          softWrap: true, // Memungkinkan teks membungkus
+                          softWrap: true,
+                          style: TextStyle(
+                            fontSize: fontSize - 2,
+                            color: textColor,
+                          ),
                         ),
                       ),
                     ],
@@ -145,7 +175,7 @@ class _HomePageState extends State<HomePage> {
           ),
           floatingActionButton: Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: lingtOrDark,
               borderRadius: BorderRadius.circular(25),
             ),
             padding: EdgeInsets.all(8),
@@ -153,7 +183,7 @@ class _HomePageState extends State<HomePage> {
             child: FloatingActionButton(
               backgroundColor: Colors.lightBlue,
               onPressed: () {
-                 Navigator.of(context).push(_createRoute());
+                Navigator.of(context).push(_createRoute());
               },
               child: Icon(Icons.add, color: Colors.white),
             ),
@@ -165,7 +195,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
 
 Route _createRoute() {
   return PageRouteBuilder(
