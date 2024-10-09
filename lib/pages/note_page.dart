@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -33,8 +35,8 @@ class _NotePageState extends State<NotePage> {
   // Format tanggal dan waktu
   String formattedDate = "";
   Color selectedColor = Colors.lightBlue;
-  final List<File?> _imageFiles = [];
-  final List<String?> _imageBlobUrls = [];
+  late List<File?> _imageFiles = [];
+  late List<String?> _imageBlobUrls = [];
 
   @override
   void initState() {
@@ -49,6 +51,8 @@ class _NotePageState extends State<NotePage> {
     formattedDate = DateFormat('dd MMM yyyy HH:mm')
         .format(widget.note?.updateTime ?? DateTime.now());
     selectedColor = widget.note?.color ?? Colors.lightBlue;
+    _imageBlobUrls = widget.note?.imageBlobUrls ?? [];
+    _imageFiles = widget.note?.imageFiles ?? [];
   }
 
   @override
@@ -57,28 +61,6 @@ class _NotePageState extends State<NotePage> {
     titleController.dispose();
     noteController.dispose();
     super.dispose();
-  }
-
-  void saveData() {
-    final note = Note(
-      keyData: keyData,
-      title: titleController.text,
-      content: noteController.text,
-      isArsip: isArsip,
-      isPinned: isPinned,
-      updateTime: dateTimeNow,
-      color: selectedColor,
-    );
-
-    if (widget.note != null) {
-      // Jika keyData ada, update catatan
-      StoreProvider.of<AppState>(context).dispatch(UpdateNoteAction(note));
-    } else {
-      // Jika keyData tidak ada, tambahkan catatan baru
-      StoreProvider.of<AppState>(context).dispatch(AddNoteAction(note));
-    }
-
-    Navigator.pop(context);
   }
 
   @override
@@ -115,7 +97,9 @@ class _NotePageState extends State<NotePage> {
                 Icons.arrow_back,
                 color: lingtOrDark,
               ),
-              onPressed: saveData,
+              onPressed: () {
+                Navigator.pop(context);
+              },
             ),
             actions: [
               IconButton(
@@ -127,6 +111,8 @@ class _NotePageState extends State<NotePage> {
                   setState(() {
                     isPinned = !isPinned;
                   });
+
+                  updateDataNote((note) => note.copyWith(isPinned: isPinned));
                 },
               ),
               IconButton(
@@ -139,6 +125,8 @@ class _NotePageState extends State<NotePage> {
                   setState(() {
                     isArsip = !isArsip;
                   });
+                  // update to reducer
+                  updateDataNote((note) => note.copyWith(isArsip: isArsip));
 
                   // Show dialog
                   showDialog(
@@ -198,6 +186,9 @@ class _NotePageState extends State<NotePage> {
                     maxLines: null, // Allow multiple lines
                     textAlignVertical:
                         TextAlignVertical.top, // Align text to the top
+                    onChanged: (value) {
+                      updateDataNote((note) => note.copyWith(title: value));
+                    },
                   ),
                   SizedBox(height: 10),
                   TextField(
@@ -215,6 +206,9 @@ class _NotePageState extends State<NotePage> {
                       color: lingtOrDark,
                     ),
                     maxLines: null, // Allows multiple lines
+                    onChanged: (value) {
+                      updateDataNote((note) => note.copyWith(content: value));
+                    },
                   ),
                 ],
               ),
@@ -224,51 +218,132 @@ class _NotePageState extends State<NotePage> {
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             child: BottomAppBar(
               color: selectedColor,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment
-                      .spaceBetween, // Menjaga jarak antara ikon dan teks
-                  children: [
-                    Row(
-                      children: [
-                        IconButton(
-                          icon: Icon(
-                            Icons.palette_outlined,
-                            color: lingtOrDark,
-                          ),
-                          onPressed: () {
-                            _showColorPicker(context);
-                          },
-                        ),
-                        IconButton(
-                          icon: Icon(
-                            Icons.image_search,
-                            color: lingtOrDark,
-                          ),
-                          onPressed: () async {
-                            // await requestPermissions();
-                            _showImageSourceDialog(context);
-                          },
-                        ),
-                      ],
-                    ),
-                    // Memposisikan teks di tengah
-                    Text(
-                      'Diedit: $formattedDate',
-                      style: TextStyle(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment
+                    .spaceBetween, // Menjaga jarak antara ikon dan teks
+                children: [
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                          Icons.palette_outlined,
                           color: lingtOrDark,
-                          fontSize: fontSize.fontContent - 4),
-                    ),
-                    SizedBox()
-                  ],
-                ),
+                        ),
+                        onPressed: () {
+                          _showColorPicker(context);
+                        },
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          Icons.image_search,
+                          color: lingtOrDark,
+                        ),
+                        onPressed: () async {
+                          // await requestPermissions();
+                          _showImageSourceDialog(context);
+                        },
+                      ),
+                    ],
+                  ),
+                  // Memposisikan teks di tengah
+                  Text(
+                    'Diedit: $formattedDate',
+                    style: TextStyle(
+                        color: lingtOrDark, fontSize: fontSize.fontContent - 4),
+                  ),
+                  SizedBox(
+                    width: 30,
+                  )
+                ],
               ),
             ),
           ),
         );
       },
     );
+  }
+
+  void _showColorPicker(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Pilih Warna'),
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
+                // Menampilkan color picker
+                BlockPicker(
+                  pickerColor: selectedColor,
+                  onColorChanged: (Color color) {
+                    setState(() {
+                      selectedColor = color; // Simpan warna yang dipilih
+                      updateDataNote(
+                          (note) => note.copyWith(color: selectedColor));
+                    });
+                  },
+                ),
+                SizedBox(height: 20),
+                Text('Atau pilih warna lain:'),
+                SizedBox(height: 20),
+                // Menampilkan ColorPicker
+                ColorPicker(
+                  pickerColor: selectedColor,
+                  onColorChanged: (Color color) {
+                    setState(() {
+                      selectedColor = color; // Simpan warna yang dipilih
+                      updateDataNote(
+                          (note) => note.copyWith(color: selectedColor));
+                    });
+                  },
+                  pickerAreaHeightPercent: 0.8,
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: Text('Clear'), // Tombol untuk mengatur warna menjadi putih
+              onPressed: () {
+                setState(() {
+                  selectedColor = Colors.white; // Set warna menjadi putih
+                  updateDataNote((note) => note.copyWith(color: selectedColor));
+                });
+                Navigator.of(context).pop(); // Tutup dialog
+              },
+            ),
+            TextButton(
+              child: Text('Default'), // Tombol untuk mengatur warna Default
+              onPressed: () {
+                setState(() {
+                  selectedColor =
+                      Colors.lightBlue; // Set warna menjadi lightBlue
+                  updateDataNote((note) => note.copyWith(color: selectedColor));
+                });
+                Navigator.of(context).pop(); // Tutup dialog
+              },
+            ),
+            TextButton(
+              child: Text('Tutup'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Tutup dialog
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void updateDataNote(Function(Note) updateFunc) {
+    if (widget.note != null) {
+      final updatedNote = updateFunc(widget.note!.copyWith(
+        updateTime: DateTime.now(), // Update the updateTime to the current time
+      )); // Pass the current note to the update function
+      print("Update data: $updatedNote");
+      StoreProvider.of<AppState>(context)
+          .dispatch(UpdateNoteAction(updatedNote));
+    }
   }
 
   Widget _buildImages() {
@@ -340,37 +415,53 @@ class _NotePageState extends State<NotePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Colors.lightBlue,
+          backgroundColor: Colors.white,
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               if (imageFile != null)
                 ClipRRect(
                   borderRadius: BorderRadius.circular(15),
-                  child: Image.file(
-                    imageFile,
-                    fit: BoxFit.cover,
-                    height: 200,
+                  child: SizedBox(
+                    width: double.infinity, // Set width to full
+                    child: Image.file(
+                      imageFile,
+                      fit: BoxFit.cover,
+                      height: 200,
+                    ),
                   ),
                 ),
               if (imageBlobUrl != null)
                 ClipRRect(
                   borderRadius: BorderRadius.circular(15),
-                  child: Image.network(
-                    imageBlobUrl,
-                    fit: BoxFit.cover,
-                    height: 200,
+                  child: SizedBox(
+                    width: double.infinity, // Set width to full
+                    child: Image.network(
+                      imageBlobUrl,
+                      fit: BoxFit.cover,
+                      height: 200,
+                    ),
                   ),
                 ),
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   setState(() {
-                    if (imageFile != null) {
+                    if (!kIsWeb) {
                       _imageFiles.remove(imageFile); // Hapus gambar dari daftar
-                    } else if (imageBlobUrl != null) {
+                      updateDataNote((note) => note.copyWith(
+                          imageFiles: _imageFiles
+                              .where((file) => file != null)
+                              .cast<File>()
+                              .toList()));
+                    } else {
                       _imageBlobUrls
                           .remove(imageBlobUrl); // Hapus blob URL dari daftar
+                      updateDataNote((note) => note.copyWith(
+                          imageBlobUrls: _imageBlobUrls
+                              .where((url) => url != null)
+                              .map((url) => url!)
+                              .toList()));
                     }
                   });
                   Navigator.of(context).pop(); // Tutup dialog
@@ -379,72 +470,6 @@ class _NotePageState extends State<NotePage> {
               ),
             ],
           ),
-        );
-      },
-    );
-  }
-
-  void _showColorPicker(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Pilih Warna'),
-          content: SingleChildScrollView(
-            child: Column(
-              children: [
-                // Menampilkan color picker
-                BlockPicker(
-                  pickerColor: selectedColor,
-                  onColorChanged: (Color color) {
-                    setState(() {
-                      selectedColor = color; // Simpan warna yang dipilih
-                    });
-                  },
-                ),
-                SizedBox(height: 20),
-                Text('Atau pilih warna lain:'),
-                SizedBox(height: 20),
-                // Menampilkan ColorPicker
-                ColorPicker(
-                  pickerColor: selectedColor,
-                  onColorChanged: (Color color) {
-                    setState(() {
-                      selectedColor = color; // Simpan warna yang dipilih
-                    });
-                  },
-                  pickerAreaHeightPercent: 0.8,
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              child: Text('Clear'), // Tombol untuk mengatur warna menjadi putih
-              onPressed: () {
-                setState(() {
-                  selectedColor = Colors.white; // Set warna menjadi putih
-                });
-                Navigator.of(context).pop(); // Tutup dialog
-              },
-            ),
-            TextButton(
-              child: Text('Default'), // Tombol untuk mengatur warna Default
-              onPressed: () {
-                setState(() {
-                  selectedColor =
-                      Colors.lightBlue; // Set warna menjadi lightBlue
-                });
-                Navigator.of(context).pop(); // Tutup dialog
-              },
-            ),
-            TextButton(
-              child: Text('Tutup'),
-              onPressed: () {
-                Navigator.of(context).pop(); // Tutup dialog
-              },
-            ),
-          ],
         );
       },
     );
@@ -491,14 +516,26 @@ class _NotePageState extends State<NotePage> {
       if (mounted) {
         if (!kIsWeb) {
           _imageFiles.add(File(pickedFile.path)); // Simpan gambar yang dipilih
+          updateDataNote((note) => note.copyWith(
+              imageFiles: _imageFiles
+                  .where((file) => file != null)
+                  .cast<File>()
+                  .toList()));
         } else {
           _imageBlobUrls.add(pickedFile.path);
+          updateDataNote((note) => note.copyWith(
+              imageBlobUrls: _imageBlobUrls
+                  .where((url) => url != null)
+                  .map((url) => url!)
+                  .toList()));
         }
         setState(() {});
+
         // print("Image selected: ${pickedFile.path}");
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Image selected: ${pickedFile.path}')),
-        );
+        // untuk menampilkan message
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(content: Text('Image selected: ${pickedFile.path}')),
+        // );
       }
     } else {
       // Jika tidak ada gambar yang dipilih, pastikan widget masih terpasang
