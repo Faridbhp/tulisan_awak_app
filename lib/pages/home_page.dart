@@ -3,10 +3,13 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:tulisan_awak_app/components/grid_card.dart';
 import 'package:tulisan_awak_app/components/note_card.dart';
 import 'package:tulisan_awak_app/constants/constants.dart';
+import 'package:tulisan_awak_app/redux/actions/actions.dart';
 import 'package:tulisan_awak_app/redux/models/model_store.dart';
 import 'package:tulisan_awak_app/pages/drawer.dart';
 import 'package:tulisan_awak_app/pages/note_page.dart';
+import 'package:tulisan_awak_app/redux/models/note.dart';
 import 'package:tulisan_awak_app/redux/state/app_state.dart';
+import 'package:uuid/uuid.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -183,6 +186,15 @@ class _HomePageState extends State<HomePage> {
               backgroundColor: Colors.lightBlue,
               onPressed: () {
                 Navigator.of(context).push(_createRoute());
+                String keyData = Uuid().v4();
+                final note = Note(
+                  keyData: keyData,
+                  title: "",
+                  content: "",
+                  updateTime: DateTime.now(),
+                );
+                StoreProvider.of<AppState>(context)
+                    .dispatch(AddNoteAction(note));
               },
               child: Icon(Icons.add, color: Colors.white),
             ),
