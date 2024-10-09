@@ -8,7 +8,17 @@ import 'package:tulisan_awak_app/redux/state/app_state.dart';
 import 'pages/home_page.dart';
 
 Future<Store<AppState>> createStore() async {
-  final initialState = AppState(notes: await loadNotesFromLocalStorage());
+  final savedNotes = await loadNotesFromLocalStorage();
+  final savedTheme = await loadThemeFromLocalStorage();
+  final savedFontSize = await loadFontSizeFromLocalStorage();
+
+  // Load other state, like notes
+  final initialState = AppState(
+    notes: savedNotes,
+    theme: savedTheme,
+    fontSize: savedFontSize,
+  );
+
   return Store<AppState>(appReducer, initialState: initialState);
 }
 

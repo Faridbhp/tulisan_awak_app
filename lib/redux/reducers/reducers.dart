@@ -9,7 +9,7 @@ AppState appReducer(AppState state, dynamic action) {
     // Tambah catatan baru
     List<Note> updatedNotes = List.from(state.notes)..add(action.note);
     saveNotesToLocalStorage(updatedNotes); // Simpan ke localStorage
-      return state.copyWith(notes: updatedNotes); 
+    return state.copyWith(notes: updatedNotes);
   } else if (action is UpdateNoteAction) {
     List<Note> updatedNotes = List.from(state.notes);
 
@@ -36,12 +36,15 @@ AppState appReducer(AppState state, dynamic action) {
       // Jika ditemukan, hapus catatan
       updatedNotes.removeAt(noteIndex);
     }
-  
+
     saveNotesToLocalStorage(updatedNotes); // Simpan ke localStorage
     return state.copyWith(notes: updatedNotes);
   } else if (action is ChangeThemeAction) {
+    saveThemeToLocalStorage(action.theme); // Save theme to local storage
     return state.copyWith(theme: action.theme);
   } else if (action is ChangeFontSizeAction) {
+    saveFontSizeToLocalStorage(
+        action.fontSize); // Save fontSize to local storage
     return state.copyWith(fontSize: action.fontSize);
   }
 
