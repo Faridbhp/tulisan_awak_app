@@ -1,6 +1,10 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:tulisan_awak_app/constants/constants.dart';
 import 'package:tulisan_awak_app/redux/actions/actions.dart';
@@ -29,6 +33,8 @@ class _NotePageState extends State<NotePage> {
   // Format tanggal dan waktu
   String formattedDate = "";
   Color selectedColor = Colors.lightBlue;
+  final List<File?> _imageFiles = [];
+  final List<String?> _imageBlobUrls = [];
 
   @override
   void initState() {
@@ -176,13 +182,14 @@ class _NotePageState extends State<NotePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  _buildImages(),
                   TextField(
                     controller: titleController, // Bind to titleController
                     decoration: InputDecoration(
                       hintText: 'Judul', // Placeholder for title
                       border: InputBorder.none,
-                      hintStyle:
-                          TextStyle(fontSize: fontSize.fontHeader, color: lingtOrDark),
+                      hintStyle: TextStyle(
+                          fontSize: fontSize.fontHeader, color: lingtOrDark),
                     ),
                     style: TextStyle(
                         fontSize: fontSize.fontHeader,
@@ -234,19 +241,143 @@ class _NotePageState extends State<NotePage> {
                             _showColorPicker(context);
                           },
                         ),
+                        IconButton(
+                          icon: Icon(
+                            Icons.image_search,
+                            color: lingtOrDark,
+                          ),
+                          onPressed: () async {
+                            // await requestPermissions();
+                            _showImageSourceDialog(context);
+                          },
+                        ),
                       ],
                     ),
                     // Memposisikan teks di tengah
                     Text(
                       'Diedit: $formattedDate',
-                      style:
-                          TextStyle(color: lingtOrDark, fontSize: fontSize.fontContent - 4),
+                      style: TextStyle(
+                          color: lingtOrDark,
+                          fontSize: fontSize.fontContent - 4),
                     ),
                     SizedBox()
                   ],
                 ),
               ),
             ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildImages() {
+    // Gabungkan kedua list _imageFiles dan _imageBlobUrls
+    List<Widget> imageWidgets = [
+      ..._imageFiles.map((imageFile) {
+        if (imageFile != null) {
+          return GestureDetector(
+            onTap: () {
+              _showImageDialog(imageFile: imageFile);
+            },
+            child: Card(
+              elevation: 4,
+              // Menggunakan Card untuk memberikan efek
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: SizedBox(
+                  child: Image.file(imageFile,
+                      fit: BoxFit.cover), // Menyesuaikan gambar
+                ),
+              ),
+            ),
+          );
+        }
+        return SizedBox
+            .shrink(); // Kembalikan widget kosong jika imageFile null
+      }),
+      ..._imageBlobUrls.map((imageBlobUrl) {
+        if (imageBlobUrl != null) {
+          return GestureDetector(
+            onTap: () {
+              _showImageDialog(imageBlobUrl: imageBlobUrl);
+            },
+            child: Card(
+              // Menggunakan Card untuk memberikan efek
+              elevation: 4, // Menambahkan bayangan
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: SizedBox(
+                  child: Image.network(imageBlobUrl,
+                      fit: BoxFit.cover), // Menyesuaikan gambar
+                ),
+              ),
+            ),
+          );
+        }
+        return SizedBox
+            .shrink(); // Kembalikan widget kosong jika imageBlobUrl null
+      }),
+    ];
+
+    // Cek apakah imageWidgets tidak kosong
+    if (imageWidgets.isNotEmpty) {
+      return SizedBox(
+        height: 150, // Atur tinggi sesuai kebutuhan
+        child: ListView(
+          scrollDirection:
+              Axis.horizontal, // Menampilkan daftar secara horizontal
+          children: imageWidgets,
+        ),
+      );
+    }
+
+    return Container(); // Tampilkan Container kosong jika tidak ada gambar
+  }
+
+  void _showImageDialog({File? imageFile, String? imageBlobUrl}) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.lightBlue,
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (imageFile != null)
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: Image.file(
+                    imageFile,
+                    fit: BoxFit.cover,
+                    height: 200,
+                  ),
+                ),
+              if (imageBlobUrl != null)
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: Image.network(
+                    imageBlobUrl,
+                    fit: BoxFit.cover,
+                    height: 200,
+                  ),
+                ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    if (imageFile != null) {
+                      _imageFiles.remove(imageFile); // Hapus gambar dari daftar
+                    } else if (imageBlobUrl != null) {
+                      _imageBlobUrls
+                          .remove(imageBlobUrl); // Hapus blob URL dari daftar
+                    }
+                  });
+                  Navigator.of(context).pop(); // Tutup dialog
+                },
+                child: Text('Delete Image'),
+              ),
+            ],
           ),
         );
       },
@@ -317,5 +448,65 @@ class _NotePageState extends State<NotePage> {
         );
       },
     );
+  }
+
+  void _showImageSourceDialog(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              if (!kIsWeb && !Platform.isWindows) ...[
+                ListTile(
+                  leading: Icon(Icons.camera),
+                  title: Text('Camera'),
+                  onTap: () {
+                    Navigator.of(context).pop(); // Menutup dialog
+                    _pickImage(ImageSource.camera); // Buka kamera
+                  },
+                ),
+              ],
+              ListTile(
+                leading: Icon(Icons.photo_library),
+                title: Text('Gallery'),
+                onTap: () {
+                  Navigator.of(context).pop(); // Menutup dialog
+                  _pickImage(ImageSource.gallery); // Buka galeri
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _pickImage(ImageSource source) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: source);
+
+    if (pickedFile != null) {
+      // Memastikan widget masih terpasang sebelum memanggil setState
+      if (mounted) {
+        if (!kIsWeb) {
+          _imageFiles.add(File(pickedFile.path)); // Simpan gambar yang dipilih
+        } else {
+          _imageBlobUrls.add(pickedFile.path);
+        }
+        setState(() {});
+        // print("Image selected: ${pickedFile.path}");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Image selected: ${pickedFile.path}')),
+        );
+      }
+    } else {
+      // Jika tidak ada gambar yang dipilih, pastikan widget masih terpasang
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('No image selected')),
+        );
+      }
+    }
   }
 }
