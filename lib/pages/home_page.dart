@@ -185,7 +185,6 @@ class _HomePageState extends State<HomePage> {
             child: FloatingActionButton(
               backgroundColor: Colors.lightBlue,
               onPressed: () {
-                Navigator.of(context).push(_createRoute());
                 String keyData = Uuid().v4();
                 final note = Note(
                   keyData: keyData,
@@ -195,6 +194,7 @@ class _HomePageState extends State<HomePage> {
                 );
                 StoreProvider.of<AppState>(context)
                     .dispatch(AddNoteAction(note));
+                Navigator.of(context).push(_createRoute(note));
               },
               child: Icon(Icons.add, color: Colors.white),
             ),
@@ -207,9 +207,10 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-Route _createRoute() {
+Route _createRoute(Note note) {
   return PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) => const NotePage(),
+    pageBuilder: (context, animation, secondaryAnimation) =>
+        NotePage(note: note),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       const begin = Offset(1.0, 0.0);
       const end = Offset.zero;
