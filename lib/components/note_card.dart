@@ -19,11 +19,20 @@ class NoteCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, Settings>(
-      converter: (store) => Settings(store.state.fontSize, store.state.theme),
+      converter: (store) => Settings(
+        store.state.theme,
+        store.state.fontSize,
+      ),
       builder: (context, storeData) {
         FontStore fontSize;
-        Color lingtOrDark =
-            note.color != Colors.white ? Colors.white : Colors.black;
+        ColorStore colorScheme =
+            (note.color == Colors.white) && (storeData.theme == 'Light')
+                ? ColorStore.light
+                : ColorStore.dark;
+        Color lingtOrDark = note.color == Colors.white
+            ? colorScheme.backgroundColor
+            : note.color;
+        Color textColor = colorScheme.textColor;
 
         switch (storeData.fontSize) {
           case "Extra Small":
@@ -39,9 +48,9 @@ class NoteCard extends StatelessWidget {
         return Card(
           elevation: 4,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10), // Mengatur sudut kartu
-          ),
-          color: note.color,
+              borderRadius: BorderRadius.circular(10), // Mengatur sudut kartu
+              side: BorderSide(color: colorScheme.sideColor)),
+          color: lingtOrDark,
           margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
           child: InkWell(
             onTap: () {
@@ -68,7 +77,7 @@ class NoteCard extends StatelessWidget {
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: fontSize.fontHeader,
-                            color: lingtOrDark,
+                            color: textColor,
                           ),
                         ),
                         SizedBox(height: 8),
@@ -77,7 +86,7 @@ class NoteCard extends StatelessWidget {
                           maxLines: 3, // Membolehkan teks lebih dari satu baris
                           overflow: TextOverflow.ellipsis, // Teks bisa meluap
                           style: TextStyle(
-                            color: lingtOrDark,
+                            color: textColor,
                             fontSize: fontSize.fontContent,
                           ),
                         ),
@@ -89,7 +98,7 @@ class NoteCard extends StatelessWidget {
                       offset: Offset(10, -10), // Geser 5 piksel ke atas
                       child: Icon(
                         Icons.push_pin,
-                        color: Colors.black,
+                        color: textColor,
                         size: 15,
                       ),
                     ),

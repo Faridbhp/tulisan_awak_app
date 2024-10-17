@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:tulisan_awak_app/components/header.dart';
 import 'package:tulisan_awak_app/constants/constants.dart';
 import 'package:tulisan_awak_app/redux/actions/actions.dart';
 import 'package:tulisan_awak_app/pages/drawer.dart';
@@ -48,41 +49,13 @@ class _SettingPageState extends State<SettingPage> {
         return Scaffold(
           backgroundColor: lingtOrDark,
           appBar: AppBar(
-            backgroundColor: lingtOrDark,
-            automaticallyImplyLeading: false,
-            title: Container(
-              decoration: BoxDecoration(
-                color: Colors.lightBlue,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Row(children: [
-                Builder(
-                  builder: (context) {
-                    return IconButton(
-                      icon: Icon(
-                        Icons.menu,
-                        color: Colors.white,
-                        size: fontSize.fontHeader,
-                      ),
-                      onPressed: () {
-                        Scaffold.of(context).openDrawer(); // Open the drawer
-                      },
-                    );
-                  },
-                ),
-                Expanded(
-                  child: Text(
-                    'Setting',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: fontSize.fontHeader,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ]),
-            ),
-          ),
+              backgroundColor: lingtOrDark,
+              automaticallyImplyLeading: false,
+              title: Header(
+                searchColor: colorScheme.searchColor,
+                textColor: textColor,
+                fontSize: fontSize.fontHeader,
+              )),
           drawer: DrawerPage(),
           body: SingleChildScrollView(
             child: Padding(
@@ -137,7 +110,8 @@ class _SettingPageState extends State<SettingPage> {
                                   lingtOrDark, // Text color based on the selected theme
                               fontWeight: FontWeight.w600, // Bold text
                             ),
-                            dropdownColor: lingtOrDark, // Background color for dropdown items
+                            dropdownColor:
+                                lingtOrDark, // Background color for dropdown items
                             onChanged: (String? newValue) {
                               setState(() {
                                 _selectedTheme =
@@ -201,7 +175,8 @@ class _SettingPageState extends State<SettingPage> {
                                   Offset(0, 1), // Offset for shadow position
                             ),
                           ],
-                          color: lingtOrDark, // Background color for dropdown button
+                          color:
+                              lingtOrDark, // Background color for dropdown button
                           borderRadius:
                               BorderRadius.circular(12), // Rounded corners
                         ),

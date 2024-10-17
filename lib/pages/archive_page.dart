@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:tulisan_awak_app/components/grid_card.dart';
+import 'package:tulisan_awak_app/components/header.dart';
 import 'package:tulisan_awak_app/components/note_card.dart';
 import 'package:tulisan_awak_app/constants/constants.dart';
 import 'package:tulisan_awak_app/redux/models/model_store.dart';
@@ -41,39 +42,13 @@ class ArchivePage extends StatelessWidget {
         return Scaffold(
           backgroundColor: lingtOrDark,
           appBar: AppBar(
-            backgroundColor: lingtOrDark,
-            automaticallyImplyLeading: false,
-            title: Container(
-              decoration: BoxDecoration(
-                  color: Colors.lightBlue,
-                  borderRadius: BorderRadius.circular(10)),
-              child: Row(children: [
-                Builder(
-                  builder: (context) {
-                    return IconButton(
-                      icon: Icon(
-                        Icons.menu,
-                        color: Colors.white,
-                      ),
-                      onPressed: () {
-                        Scaffold.of(context).openDrawer(); // Open the drawer
-                      },
-                    );
-                  },
-                ),
-                Expanded(
-                  // Membungkus Text dalam Expanded
-                  child: Text(
-                    'Arsip',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: fontSize.fontHeader,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ]),
-            ),
-          ),
+              backgroundColor: lingtOrDark,
+              automaticallyImplyLeading: false,
+              title: Header(
+                searchColor: colorScheme.searchColor,
+                textColor: textColor,
+                fontSize: fontSize.fontHeader,
+              )),
           drawer: DrawerPage(),
           body: filteredNotes.isEmpty
               ? Center(
@@ -134,7 +109,7 @@ class ArchivePage extends StatelessWidget {
           bottomNavigationBar: ClipRRect(
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             child: BottomAppBar(
-              color: Colors.lightBlue,
+              color: colorScheme.bottomColor,
             ),
           ),
         );

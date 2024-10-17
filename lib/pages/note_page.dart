@@ -34,7 +34,7 @@ class _NotePageState extends State<NotePage> {
   DateTime dateTimeNow = DateTime.now();
   // Format tanggal dan waktu
   String formattedDate = "";
-  Color selectedColor = Colors.lightBlue;
+  Color selectedColor = Colors.white;
   late List<File?> _imageFiles = [];
   late List<String?> _imageBlobUrls = [];
 
@@ -50,7 +50,7 @@ class _NotePageState extends State<NotePage> {
     keyData = widget.note?.keyData ?? Uuid().v4();
     formattedDate = DateFormat('dd MMM yyyy HH:mm')
         .format(widget.note?.updateTime ?? DateTime.now());
-    selectedColor = widget.note?.color ?? Colors.lightBlue;
+    selectedColor = widget.note?.color ?? Colors.white;
     _imageBlobUrls = widget.note?.imageBlobUrls ?? [];
     _imageFiles = widget.note?.imageFiles ?? [];
   }
@@ -65,16 +65,22 @@ class _NotePageState extends State<NotePage> {
 
   @override
   Widget build(BuildContext context) {
-    // Menentukan warna ikon berdasarkan selectedColor
-    Color lingtOrDark =
-        selectedColor != Colors.white ? Colors.white : Colors.black;
-
-    return StoreConnector<AppState, Settings>(
-      converter: (store) => Settings(
-        store.state.theme,
+    return StoreConnector<AppState, HomePageStore>(
+      converter: (store) => HomePageStore(
+        store.state.notes,
         store.state.fontSize,
+        store.state.theme,
       ),
       builder: (context, storeData) {
+        ColorStore colorScheme =
+            (selectedColor == Colors.white) && (storeData.theme == 'Light')
+                ? ColorStore.light
+                : ColorStore.dark;
+        Color lingtOrDark = selectedColor == Colors.white
+            ? colorScheme.backgroundColor
+            : selectedColor;
+        Color textColor = colorScheme.textColor;
+
         FontStore fontSize;
 
         switch (storeData.fontSize) {
@@ -89,15 +95,21 @@ class _NotePageState extends State<NotePage> {
         }
 
         return Scaffold(
-          backgroundColor: selectedColor,
+          backgroundColor: lingtOrDark,
           appBar: AppBar(
-            backgroundColor: selectedColor,
+            backgroundColor: lingtOrDark,
             leading: IconButton(
               icon: Icon(
                 Icons.arrow_back,
-                color: lingtOrDark,
+                color: textColor,
               ),
               onPressed: () {
+                if ((titleController.text == "" && noteController.text == "") &&
+                    storeData.notes[storeData.notes.length - 1].keyData ==
+                        widget.note?.keyData) {
+                  StoreProvider.of<AppState>(context)
+                      .dispatch(DeleteNoteAction(widget.note!.keyData));
+                }
                 Navigator.pop(context);
               },
             ),
@@ -105,7 +117,7 @@ class _NotePageState extends State<NotePage> {
               IconButton(
                 icon: Icon(
                   isPinned ? Icons.push_pin : Icons.push_pin_outlined,
-                  color: lingtOrDark,
+                  color: textColor,
                 ),
                 onPressed: () {
                   setState(() {
@@ -118,7 +130,7 @@ class _NotePageState extends State<NotePage> {
               IconButton(
                 icon: Icon(
                   isArsip ? Icons.unarchive_outlined : Icons.archive_outlined,
-                  color: lingtOrDark,
+                  color: textColor,
                 ),
                 // Action for archive icon
                 onPressed: () {
@@ -153,7 +165,7 @@ class _NotePageState extends State<NotePage> {
                 IconButton(
                     icon: Icon(
                       Icons.delete,
-                      color: lingtOrDark,
+                      color: textColor,
                     ),
                     onPressed: () {
                       // Dispatch aksi untuk menghapus catatan
@@ -177,12 +189,12 @@ class _NotePageState extends State<NotePage> {
                       hintText: 'Judul', // Placeholder for title
                       border: InputBorder.none,
                       hintStyle: TextStyle(
-                          fontSize: fontSize.fontHeader, color: lingtOrDark),
+                          fontSize: fontSize.fontHeader, color: textColor),
                     ),
                     style: TextStyle(
                         fontSize: fontSize.fontHeader,
                         fontWeight: FontWeight.bold,
-                        color: lingtOrDark),
+                        color: textColor),
                     maxLines: null, // Allow multiple lines
                     textAlignVertical:
                         TextAlignVertical.top, // Align text to the top
@@ -198,12 +210,12 @@ class _NotePageState extends State<NotePage> {
                       border: InputBorder.none,
                       hintStyle: TextStyle(
                         fontSize: fontSize.fontContent,
-                        color: lingtOrDark,
+                        color: textColor,
                       ),
                     ),
                     style: TextStyle(
                       fontSize: fontSize.fontContent,
-                      color: lingtOrDark,
+                      color: textColor,
                     ),
                     maxLines: null, // Allows multiple lines
                     onChanged: (value) {
@@ -217,7 +229,7 @@ class _NotePageState extends State<NotePage> {
           bottomNavigationBar: ClipRRect(
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             child: BottomAppBar(
-              color: selectedColor,
+              color: lingtOrDark,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment
                     .spaceBetween, // Menjaga jarak antara ikon dan teks
@@ -227,7 +239,7 @@ class _NotePageState extends State<NotePage> {
                       IconButton(
                         icon: Icon(
                           Icons.palette_outlined,
-                          color: lingtOrDark,
+                          color: textColor,
                         ),
                         onPressed: () {
                           _showColorPicker(context);
@@ -236,7 +248,7 @@ class _NotePageState extends State<NotePage> {
                       IconButton(
                         icon: Icon(
                           Icons.image_search,
-                          color: lingtOrDark,
+                          color: textColor,
                         ),
                         onPressed: () async {
                           // await requestPermissions();
@@ -249,7 +261,7 @@ class _NotePageState extends State<NotePage> {
                   Text(
                     'Diedit: $formattedDate',
                     style: TextStyle(
-                        color: lingtOrDark, fontSize: fontSize.fontContent - 4),
+                        color: textColor, fontSize: fontSize.fontContent - 4),
                   ),
                   SizedBox(
                     width: 30,
@@ -307,17 +319,6 @@ class _NotePageState extends State<NotePage> {
               onPressed: () {
                 setState(() {
                   selectedColor = Colors.white; // Set warna menjadi putih
-                  updateDataNote((note) => note.copyWith(color: selectedColor));
-                });
-                Navigator.of(context).pop(); // Tutup dialog
-              },
-            ),
-            TextButton(
-              child: Text('Default'), // Tombol untuk mengatur warna Default
-              onPressed: () {
-                setState(() {
-                  selectedColor =
-                      Colors.lightBlue; // Set warna menjadi lightBlue
                   updateDataNote((note) => note.copyWith(color: selectedColor));
                 });
                 Navigator.of(context).pop(); // Tutup dialog

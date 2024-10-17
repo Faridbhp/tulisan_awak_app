@@ -20,7 +20,7 @@ class Note {
     required this.updateTime,
     this.isArsip = false,
     this.isPinned = false,
-    this.color = Colors.lightBlue,
+    this.color = Colors.white,
     List<File>? imageFiles,
     List<String>? imageBlobUrls,
   })  : imageFiles = imageFiles ?? [],

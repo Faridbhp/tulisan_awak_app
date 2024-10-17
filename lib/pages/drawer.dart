@@ -43,7 +43,7 @@ class DrawerPage extends StatelessWidget {
             children: [
               DrawerHeader(
                 decoration: BoxDecoration(
-                  color: Colors.lightBlue,
+                  color: colorScheme.searchColor,
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,7 +81,7 @@ class DrawerPage extends StatelessWidget {
                             ),
                             Text(
                               "Tulisan Awak",
-                              style: TextStyle(fontSize: fontSize.fontTitle),
+                              style: TextStyle(fontSize: fontSize.fontTitle, color: textColor),
                             )
                           ],
                         ),
@@ -90,7 +90,7 @@ class DrawerPage extends StatelessWidget {
                           child: Text(
                             'Menu',
                             style: TextStyle(
-                                color: Colors.black,
+                                color: textColor,
                                 fontSize: fontSize.fontTitle,
                                 fontWeight: FontWeight.bold),
                           ),

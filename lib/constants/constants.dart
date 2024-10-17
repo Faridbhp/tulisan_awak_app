@@ -2,31 +2,43 @@ import 'package:flutter/material.dart';
 
 class ColorStore {
   final Color backgroundColor;
+  final Color searchColor;
+  final Color bottomColor;
   final Color textColor;
   final Color borderColor;
   final Color iconColor;
+  final Color sideColor;
 
   ColorStore({
     required this.backgroundColor,
+    required this.searchColor,
+    required this.bottomColor,
     required this.textColor,
     required this.borderColor,
     required this.iconColor,
+    required this.sideColor,
   });
 
   // Define dark theme colors
   static ColorStore dark = ColorStore(
-    backgroundColor: Color.fromARGB(255, 80, 74, 74),
+    backgroundColor: Color.fromARGB(255, 28, 17, 13),
+    searchColor: Color.fromARGB(255, 45, 28, 21),
+    bottomColor: Color.fromARGB(255, 40, 29, 23),
     textColor: Colors.white,
     borderColor: Colors.grey,
     iconColor: Colors.yellow,
+    sideColor: Colors.white,
   );
 
   // Define light theme colors
   static ColorStore light = ColorStore(
-    backgroundColor: Colors.white,
+    backgroundColor: Color.fromARGB(255, 246, 235, 229),
+    searchColor: Color.fromARGB(255,248,230, 229),
+    bottomColor: Color.fromARGB(255, 254,234,223),
     textColor: Colors.black,
     borderColor: Colors.black,
     iconColor: Colors.blue,
+    sideColor: Color.fromARGB(255, 213,201,196),
   );
 }
 

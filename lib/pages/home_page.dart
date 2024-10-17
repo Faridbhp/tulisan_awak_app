@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:tulisan_awak_app/components/grid_card.dart';
 import 'package:tulisan_awak_app/components/note_card.dart';
+import 'package:tulisan_awak_app/components/search_bar.dart';
 import 'package:tulisan_awak_app/constants/constants.dart';
 import 'package:tulisan_awak_app/redux/actions/actions.dart';
 import 'package:tulisan_awak_app/redux/models/model_store.dart';
@@ -70,46 +71,15 @@ class _HomePageState extends State<HomePage> {
           appBar: AppBar(
             backgroundColor: lingtOrDark,
             automaticallyImplyLeading: false,
-            title: Container(
-              decoration: BoxDecoration(
-                  color: Colors.lightBlue,
-                  borderRadius: BorderRadius.circular(10)),
-              child: Row(
-                children: [
-                  Builder(
-                    builder: (context) {
-                      return IconButton(
-                        icon: Icon(
-                          Icons.menu,
-                          color: Colors.white,
-                          size: fontSize.fontHeader,
-                        ),
-                        onPressed: () {
-                          Scaffold.of(context).openDrawer(); // Open the drawer
-                        },
-                      );
-                    },
-                  ),
-                  Expanded(
-                    child: TextField(
-                      onChanged: (value) {
-                        setState(() {
-                          // Update search query
-                          searchQuery = value;
-                        });
-                      },
-                      decoration: InputDecoration(
-                        hintText: 'Search...',
-                        hintStyle: TextStyle(color: Colors.white70),
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(vertical: 10),
-                      ),
-                      style: TextStyle(
-                          color: Colors.white, fontSize: fontSize.fontHeader),
-                    ),
-                  ),
-                ],
-              ),
+            title: SearchBarCustom(
+              backgroundColor: colorScheme.searchColor,
+              textColor: textColor,
+              fontSize: fontSize.fontHeader,
+              onSearchChanged: (value) {
+                setState(() {
+                  searchQuery = value; // Update search query
+                });
+              },
             ),
           ),
           drawer: DrawerPage(),
@@ -172,7 +142,7 @@ class _HomePageState extends State<HomePage> {
           bottomNavigationBar: ClipRRect(
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             child: BottomAppBar(
-              color: Colors.lightBlue,
+              color: colorScheme.bottomColor,
             ),
           ),
           floatingActionButton: Container(
@@ -183,7 +153,7 @@ class _HomePageState extends State<HomePage> {
             padding: EdgeInsets.all(8),
             margin: EdgeInsets.only(right: 20, top: 10),
             child: FloatingActionButton(
-              backgroundColor: Colors.lightBlue,
+              backgroundColor: colorScheme.bottomColor,
               onPressed: () {
                 String keyData = Uuid().v4();
                 final note = Note(
@@ -196,7 +166,7 @@ class _HomePageState extends State<HomePage> {
                     .dispatch(AddNoteAction(note));
                 Navigator.of(context).push(_createRoute(note));
               },
-              child: Icon(Icons.add, color: Colors.white),
+              child: Icon(Icons.add, color: textColor),
             ),
           ),
           floatingActionButtonLocation:
