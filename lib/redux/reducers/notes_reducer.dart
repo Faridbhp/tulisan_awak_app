@@ -1,5 +1,5 @@
 import 'package:tulisan_awak_app/local_storage/local_storage.dart';
-import 'package:tulisan_awak_app/redux/actions/actions.dart';
+import 'package:tulisan_awak_app/redux/actions/notes_actions.dart';
 import 'package:tulisan_awak_app/redux/models/note.dart';
 import 'package:tulisan_awak_app/redux/state/app_state.dart';
 

@@ -4,7 +4,7 @@ import 'package:tulisan_awak_app/components/grid_card.dart';
 import 'package:tulisan_awak_app/components/grid_card_staggered.dart';
 import 'package:tulisan_awak_app/components/search_bar.dart';
 import 'package:tulisan_awak_app/constants/constants.dart';
-import 'package:tulisan_awak_app/redux/actions/actions.dart';
+import 'package:tulisan_awak_app/redux/actions/notes_actions.dart';
 import 'package:tulisan_awak_app/redux/models/model_store.dart';
 import 'package:tulisan_awak_app/pages/drawer.dart';
 import 'package:tulisan_awak_app/pages/note_page.dart';
