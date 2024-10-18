@@ -42,7 +42,7 @@ class ColorStore {
     searchColor: Color(0xFFF4EAE0),
     bottomColor: Color(0xFFF4EAE0),
     textColor: Colors.black,
-    borderColor: Color(0xFF000000),
+    borderColor: Colors.black,
     iconColor: Colors.black,
     sideColor: Color.fromARGB(255, 213, 201, 196),
     hoverColor: Color(0xFFF4EAE0),
