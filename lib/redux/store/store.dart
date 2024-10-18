@@ -1,7 +1,8 @@
 import 'package:redux/redux.dart';
-import 'package:tulisan_awak_app/local_storage/local_storage.dart';
+import 'package:tulisan_awak_app/local_storage/local_storage_notes.dart';
+import 'package:tulisan_awak_app/local_storage/local_storage_setting.dart';
 import 'package:tulisan_awak_app/redux/state/app_state.dart';
-import 'package:tulisan_awak_app/redux/reducers/reducers.dart'; 
+import 'package:tulisan_awak_app/redux/reducers/reducers.dart';
 
 Future<Store<AppState>> createStore() async {
   final savedNotes = await loadNotesFromLocalStorage();

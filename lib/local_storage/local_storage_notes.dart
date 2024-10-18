@@ -13,16 +13,6 @@ Future<void> saveNotesToLocalStorage(List<Note> notes) async {
   await prefs.setStringList('notes', notesJson);
 }
 
-Future<void> saveThemeToLocalStorage(String theme) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  prefs.setString('theme', theme);
-}
-
-Future<void> saveFontSizeToLocalStorage(String fontSize) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  prefs.setString('fontSize', fontSize);
-}
-
 // Fungsi untuk mengambil catatan dari SharedPreferences
 Future<List<Note>> loadNotesFromLocalStorage() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -50,14 +40,4 @@ Future<List<Note>> loadNotesFromLocalStorage() async {
   }
 
   return []; // Return an empty list if no notes found or if there's an error
-}
-
-Future<String> loadThemeFromLocalStorage() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  return prefs.getString('theme') ?? 'Light'; // Default theme is 'Light'
-}
-
-Future<String> loadFontSizeFromLocalStorage() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  return prefs.getString('fontSize') ?? 'Small'; // Default fontSize is 'Small'
 }

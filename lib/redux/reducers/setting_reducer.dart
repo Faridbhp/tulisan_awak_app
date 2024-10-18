@@ -1,4 +1,4 @@
-import 'package:tulisan_awak_app/local_storage/local_storage.dart';
+import 'package:tulisan_awak_app/local_storage/local_storage_setting.dart';
 import 'package:tulisan_awak_app/redux/actions/setting_action.dart';
 import 'package:tulisan_awak_app/redux/state/app_state.dart';
 
@@ -10,7 +10,7 @@ AppState settingReducer(AppState state, dynamic action) {
     saveFontSizeToLocalStorage(
         action.fontSize); // Save fontSize to local storage
     return state.copyWith(fontSize: action.fontSize);
-  }
+  } else if (action is ChangeGridViewAction) {}
 
   return state;
 }
