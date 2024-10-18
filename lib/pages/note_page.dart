@@ -10,7 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:tulisan_awak_app/components/color_picker.dart';
 import 'package:tulisan_awak_app/components/custom_bottom_app_bar.dart';
 import 'package:tulisan_awak_app/constants/constants.dart';
-import 'package:tulisan_awak_app/redux/actions/actions.dart';
+import 'package:tulisan_awak_app/redux/actions/notes_actions.dart';
 import 'package:tulisan_awak_app/components/alert_dialog.dart';
 import 'package:tulisan_awak_app/redux/models/model_store.dart';
 import 'package:tulisan_awak_app/redux/models/note.dart';
