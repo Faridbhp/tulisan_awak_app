@@ -181,31 +181,31 @@ class _NotePageState extends State<NotePage> {
           ),
           body: Padding(
             padding: const EdgeInsets.all(16.0), // Padding around content
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildImages(),
-                TextField(
-                  controller: titleController, // Bind to titleController
-                  decoration: InputDecoration(
-                    hintText: 'Judul', // Placeholder for title
-                    border: InputBorder.none,
-                    hintStyle: TextStyle(
-                        fontSize: fontSize.fontHeader, color: textColor),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildImages(),
+                  TextField(
+                    controller: titleController, // Bind to titleController
+                    decoration: InputDecoration(
+                      hintText: 'Judul', // Placeholder for title
+                      border: InputBorder.none,
+                      hintStyle: TextStyle(
+                          fontSize: fontSize.fontHeader, color: textColor),
+                    ),
+                    style: TextStyle(
+                        fontSize: fontSize.fontHeader,
+                        fontWeight: FontWeight.bold,
+                        color: textColor),
+                    maxLines: null, // Allow multiple lines
+                    textAlignVertical:
+                        TextAlignVertical.top, // Align text to the top
+                    onChanged: (value) {
+                      updateDataNote((note) => note.copyWith(title: value));
+                    },
                   ),
-                  style: TextStyle(
-                      fontSize: fontSize.fontHeader,
-                      fontWeight: FontWeight.bold,
-                      color: textColor),
-                  maxLines: null, // Allow multiple lines
-                  textAlignVertical:
-                      TextAlignVertical.top, // Align text to the top
-                  onChanged: (value) {
-                    updateDataNote((note) => note.copyWith(title: value));
-                  },
-                ),
-                Expanded(
-                  child: GestureDetector(
+                  GestureDetector(
                     onTap: () {
                       FocusScope.of(context).requestFocus(FocusNode());
                       FocusScope.of(context).requestFocus(FocusNode());
@@ -231,8 +231,8 @@ class _NotePageState extends State<NotePage> {
                       },
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
           bottomNavigationBar: CustomBottomAppBar(
