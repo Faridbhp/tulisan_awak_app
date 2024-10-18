@@ -11,20 +11,23 @@ class GridCardStaggered extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MasonryGridView.builder(
-        gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: gridCount, // Jumlah kolom
+    return ScrollConfiguration(
+      behavior: ScrollBehavior().copyWith(scrollbars: false),
+      child: MasonryGridView.builder(
+          gridDelegate: SliverSimpleGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: gridCount, // Jumlah kolom
+          ),
+          mainAxisSpacing: 0, // Jarak antara item secara vertikal
+          crossAxisSpacing: 8, // Jarak antara item secara horizontal
+          itemCount: allNotes.length,
+          itemBuilder: (context, index) {
+            final note = allNotes[index];
+            return NoteCard(
+              note: note,
+              index: index,
+            );
+          },
         ),
-        mainAxisSpacing: 0, // Jarak antara item secara vertikal
-        crossAxisSpacing: 8, // Jarak antara item secara horizontal
-        itemCount: allNotes.length,
-        itemBuilder: (context, index) {
-          final note = allNotes[index];
-          return NoteCard(
-            note: note,
-            index: index,
-          );
-        },
-      );
+    );
   }
 }

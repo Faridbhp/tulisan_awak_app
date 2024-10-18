@@ -14,20 +14,23 @@ class GridCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 30),
-      child: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: gridCount, // Contoh: tiga kartu per baris
-          childAspectRatio: 1, // Atur aspek rasio sesuai kebutuhan
-          crossAxisSpacing: 10, // Ruang antara kartu
+      child: ScrollConfiguration(
+        behavior: ScrollBehavior().copyWith(scrollbars: false),
+        child: GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: gridCount, // Contoh: tiga kartu per baris
+            childAspectRatio: 1, // Atur aspek rasio sesuai kebutuhan
+            crossAxisSpacing: 10, // Ruang antara kartu
+          ),
+          itemCount: allNotes.length, // Menggunakan panjang daftar allNotes
+          itemBuilder: (context, index) {
+            final note = allNotes[index]; // Ambil catatan berdasarkan index
+            return NoteCard(
+              note: note,
+              index: index,
+            );
+          },
         ),
-        itemCount: allNotes.length, // Menggunakan panjang daftar allNotes
-        itemBuilder: (context, index) {
-          final note = allNotes[index]; // Ambil catatan berdasarkan index
-          return NoteCard(
-            note: note,
-            index: index,
-          );
-        },
       ),
     );
   }
