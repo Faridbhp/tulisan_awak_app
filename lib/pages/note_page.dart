@@ -4,10 +4,11 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:tulisan_awak_app/components/color_picker.dart';
+import 'package:tulisan_awak_app/components/custom_bottom_app_bar.dart';
 import 'package:tulisan_awak_app/constants/constants.dart';
 import 'package:tulisan_awak_app/redux/actions/actions.dart';
 import 'package:tulisan_awak_app/components/alert_dialog.dart';
@@ -27,6 +28,7 @@ class NotePage extends StatefulWidget {
 class _NotePageState extends State<NotePage> {
   late TextEditingController titleController;
   late TextEditingController noteController;
+  final UndoHistoryController _undoNoteController = UndoHistoryController();
   bool isArsip = false;
   bool isPinned = false;
   var uuid = Uuid().v4();
@@ -60,6 +62,7 @@ class _NotePageState extends State<NotePage> {
     // Dispose of controllers to prevent memory leaks
     titleController.dispose();
     noteController.dispose();
+    _undoNoteController.dispose();
     super.dispose();
   }
 
@@ -176,99 +179,74 @@ class _NotePageState extends State<NotePage> {
               ]
             ],
           ),
-          body: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0), // Padding around content
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildImages(),
-                  TextField(
-                    controller: titleController, // Bind to titleController
-                    decoration: InputDecoration(
-                      hintText: 'Judul', // Placeholder for title
-                      border: InputBorder.none,
-                      hintStyle: TextStyle(
-                          fontSize: fontSize.fontHeader, color: textColor),
-                    ),
-                    style: TextStyle(
-                        fontSize: fontSize.fontHeader,
-                        fontWeight: FontWeight.bold,
-                        color: textColor),
-                    maxLines: null, // Allow multiple lines
-                    textAlignVertical:
-                        TextAlignVertical.top, // Align text to the top
-                    onChanged: (value) {
-                      updateDataNote((note) => note.copyWith(title: value));
-                    },
+          body: Padding(
+            padding: const EdgeInsets.all(16.0), // Padding around content
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildImages(),
+                TextField(
+                  controller: titleController, // Bind to titleController
+                  decoration: InputDecoration(
+                    hintText: 'Judul', // Placeholder for title
+                    border: InputBorder.none,
+                    hintStyle: TextStyle(
+                        fontSize: fontSize.fontHeader, color: textColor),
                   ),
-                  SizedBox(height: 10),
-                  TextField(
-                    controller: noteController, // Bind to noteController
-                    decoration: InputDecoration(
-                      hintText: 'Catatan', // Placeholder for note content
-                      border: InputBorder.none,
-                      hintStyle: TextStyle(
+                  style: TextStyle(
+                      fontSize: fontSize.fontHeader,
+                      fontWeight: FontWeight.bold,
+                      color: textColor),
+                  maxLines: null, // Allow multiple lines
+                  textAlignVertical:
+                      TextAlignVertical.top, // Align text to the top
+                  onChanged: (value) {
+                    updateDataNote((note) => note.copyWith(title: value));
+                  },
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () {
+                      FocusScope.of(context).requestFocus(FocusNode());
+                      FocusScope.of(context).requestFocus(FocusNode());
+                    },
+                    child: TextField(
+                      controller: noteController, // Bind to noteController
+                      undoController: _undoNoteController,
+                      decoration: InputDecoration(
+                        hintText: 'Catatan', // Placeholder for note content
+                        border: InputBorder.none,
+                        hintStyle: TextStyle(
+                          fontSize: fontSize.fontContent,
+                          color: textColor,
+                        ),
+                      ),
+                      style: TextStyle(
                         fontSize: fontSize.fontContent,
                         color: textColor,
                       ),
+                      maxLines: null, // Allows multiple lines
+                      onChanged: (value) {
+                        updateDataNote((note) => note.copyWith(content: value));
+                      },
                     ),
-                    style: TextStyle(
-                      fontSize: fontSize.fontContent,
-                      color: textColor,
-                    ),
-                    maxLines: null, // Allows multiple lines
-                    onChanged: (value) {
-                      updateDataNote((note) => note.copyWith(content: value));
-                    },
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-          bottomNavigationBar: ClipRRect(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            child: BottomAppBar(
-              color: lingtOrDark,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment
-                    .spaceBetween, // Menjaga jarak antara ikon dan teks
-                children: [
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: Icon(
-                          Icons.palette_outlined,
-                          color: textColor,
-                        ),
-                        onPressed: () {
-                          _showColorPicker(context);
-                        },
-                      ),
-                      IconButton(
-                        icon: Icon(
-                          Icons.image_search,
-                          color: textColor,
-                        ),
-                        onPressed: () async {
-                          // await requestPermissions();
-                          _showImageSourceDialog(context);
-                        },
-                      ),
-                    ],
-                  ),
-                  // Memposisikan teks di tengah
-                  Text(
-                    'Diedit: $formattedDate',
-                    style: TextStyle(
-                        color: textColor, fontSize: fontSize.fontContent - 4),
-                  ),
-                  SizedBox(
-                    width: 30,
-                  )
-                ],
-              ),
-            ),
+          bottomNavigationBar: CustomBottomAppBar(
+            undoController: _undoNoteController,
+            backgroundColor: lingtOrDark,
+            formattedDate: formattedDate,
+            textColor: textColor,
+            onColorPickerPressed: () {
+              _showColorPicker(context);
+            },
+            onImageSourcePressed: () async {
+              // await requestPermissions();
+              _showImageSourceDialog(context);
+            },
           ),
         );
       },
@@ -279,68 +257,58 @@ class _NotePageState extends State<NotePage> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Pilih Warna'),
-          content: SingleChildScrollView(
-            child: Column(
-              children: [
-                // Menampilkan color picker
-                BlockPicker(
-                  pickerColor: selectedColor,
-                  onColorChanged: (Color color) {
-                    setState(() {
-                      selectedColor = color; // Simpan warna yang dipilih
-                      updateDataNote(
-                          (note) => note.copyWith(color: selectedColor));
-                    });
-                  },
-                ),
-                SizedBox(height: 20),
-                Text('Atau pilih warna lain:'),
-                SizedBox(height: 20),
-                // Menampilkan ColorPicker
-                ColorPicker(
-                  pickerColor: selectedColor,
-                  onColorChanged: (Color color) {
-                    setState(() {
-                      selectedColor = color; // Simpan warna yang dipilih
-                      updateDataNote(
-                          (note) => note.copyWith(color: selectedColor));
-                    });
-                  },
-                  pickerAreaHeightPercent: 0.8,
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              child: Text('Clear'), // Tombol untuk mengatur warna menjadi putih
-              onPressed: () {
-                setState(() {
-                  selectedColor = Colors.white; // Set warna menjadi putih
-                  updateDataNote((note) => note.copyWith(color: selectedColor));
-                });
-                Navigator.of(context).pop(); // Tutup dialog
-              },
-            ),
-            TextButton(
-              child: Text('Tutup'),
-              onPressed: () {
-                Navigator.of(context).pop(); // Tutup dialog
-              },
-            ),
-          ],
-        );
+        return ColorPickerCustom(
+            selectedColor: selectedColor,
+            onColorChanged: onColorSelected,
+            onClearColor: onClearColor,
+            onClose: onClosePopUp);
       },
     );
+  }
+
+  void onColorSelected(Color color) {
+    setState(() {
+      selectedColor = color; // Simpan warna yang dipilih
+      updateDataNote((note) => note.copyWith(color: selectedColor));
+    });
+  }
+
+  void onClearColor() {
+    setState(() {
+      selectedColor = Colors.white; // Set warna menjadi putih
+      updateDataNote((note) => note.copyWith(color: selectedColor));
+    });
+    Navigator.of(context).pop(); // Tutup dialog
+  }
+
+  void onClosePopUp() {
+    Navigator.of(context).pop(); // Tutup dialog
   }
 
   void updateDataNote(Function(Note) updateFunc) {
     if (widget.note != null) {
       final updatedNote = updateFunc(widget.note!.copyWith(
-        updateTime: DateTime.now(), // Update the updateTime to the current time
-      )); // Pass the current note to the update function
+        title: titleController
+            .text, // Menggunakan nilai dari TextEditingController
+        content:
+            noteController.text, // Menggunakan nilai dari TextEditingController
+        isArsip: isArsip, // Menggunakan nilai dari variabel isArsip
+        isPinned: isPinned, // Menggunakan nilai dari variabel isPinned
+        color: selectedColor, // Menggunakan nilai dari selectedColor
+        imageFiles: _imageFiles
+            .where((file) => file != null)
+            .cast<File>()
+            .toList(), // Menggunakan nilai dari _imageFiles
+        imageBlobUrls: _imageBlobUrls
+            .where((url) => url != null)
+            .cast<String>()
+            .toList(), // Menggunakan nilai dari _imageBlobUrls
+        updateTime: DateTime.now(), // Memperbarui updateTime
+        keyData: keyData, // Menggunakan nilai dari keyData
+      ));
+      // final updatedNote = updateFunc(widget.note!.copyWith(
+      //   updateTime: DateTime.now(), // Update the updateTime to the current time
+      // )); // Pass the current note to the update function
       print("Update data: $updatedNote");
       StoreProvider.of<AppState>(context)
           .dispatch(UpdateNoteAction(updatedNote));
