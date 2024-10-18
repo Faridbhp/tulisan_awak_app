@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:tulisan_awak_app/components/header.dart';
 import 'package:tulisan_awak_app/constants/constants.dart';
-import 'package:tulisan_awak_app/redux/actions/actions.dart';
 import 'package:tulisan_awak_app/pages/drawer.dart';
+import 'package:tulisan_awak_app/redux/actions/setting_action.dart';
 import 'package:tulisan_awak_app/redux/models/model_store.dart';
 import 'package:tulisan_awak_app/redux/state/app_state.dart';
 

@@ -2,25 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
-import 'package:tulisan_awak_app/local_storage/local_storage.dart';
-import 'package:tulisan_awak_app/redux/reducers/reducers.dart';
 import 'package:tulisan_awak_app/redux/state/app_state.dart';
+import 'package:tulisan_awak_app/redux/store/store.dart';
 import 'pages/home_page.dart';
-
-Future<Store<AppState>> createStore() async {
-  final savedNotes = await loadNotesFromLocalStorage();
-  final savedTheme = await loadThemeFromLocalStorage();
-  final savedFontSize = await loadFontSizeFromLocalStorage();
-
-  // Load other state, like notes
-  final initialState = AppState(
-    notes: savedNotes,
-    theme: savedTheme,
-    fontSize: savedFontSize,
-  );
-
-  return Store<AppState>(appReducer, initialState: initialState);
-}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
