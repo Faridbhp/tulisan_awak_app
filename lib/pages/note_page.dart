@@ -120,7 +120,7 @@ class _NotePageState extends State<NotePage> {
               IconButton(
                 icon: Icon(
                   isPinned ? Icons.push_pin : Icons.push_pin_outlined,
-                  color: textColor,
+                  color: colorScheme.iconColor,
                 ),
                 onPressed: () {
                   setState(() {
@@ -133,7 +133,7 @@ class _NotePageState extends State<NotePage> {
               IconButton(
                 icon: Icon(
                   isArsip ? Icons.unarchive_outlined : Icons.archive_outlined,
-                  color: textColor,
+                  color: colorScheme.iconColor,
                 ),
                 // Action for archive icon
                 onPressed: () {
@@ -239,7 +239,7 @@ class _NotePageState extends State<NotePage> {
             undoController: _undoNoteController,
             backgroundColor: lingtOrDark,
             formattedDate: formattedDate,
-            textColor: textColor,
+            iconColor: colorScheme.iconColor,
             onColorPickerPressed: () {
               _showColorPicker(context);
             },

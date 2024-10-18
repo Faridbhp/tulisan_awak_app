@@ -6,7 +6,7 @@ import 'package:tulisan_awak_app/redux/models/note.dart';
 import 'package:tulisan_awak_app/pages/note_page.dart';
 import 'package:tulisan_awak_app/redux/state/app_state.dart';
 
-class NoteCard extends StatelessWidget {
+class NoteCard extends StatefulWidget {
   final Note note;
   final int index;
 
@@ -15,6 +15,13 @@ class NoteCard extends StatelessWidget {
     required this.note,
     required this.index,
   });
+
+  @override
+  State<NoteCard> createState() => _NoteCardState();
+}
+
+class _NoteCardState extends State<NoteCard> {
+  bool isHovered = false;
 
   @override
   Widget build(BuildContext context) {
@@ -26,12 +33,12 @@ class NoteCard extends StatelessWidget {
       builder: (context, storeData) {
         FontStore fontSize;
         ColorStore colorScheme =
-            (note.color == Colors.white) && (storeData.theme == 'Light')
+            (widget.note.color == Colors.white) && (storeData.theme == 'Light')
                 ? ColorStore.light
                 : ColorStore.dark;
-        Color lingtOrDark = note.color == Colors.white
+        Color lingtOrDark = widget.note.color == Colors.white
             ? colorScheme.backgroundColor
-            : note.color;
+            : widget.note.color;
         Color textColor = colorScheme.textColor;
 
         switch (storeData.fontSize) {
@@ -45,67 +52,72 @@ class NoteCard extends StatelessWidget {
             fontSize = FontStore.small;
         }
 
-        return Card(
-          elevation: 4,
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10), // Mengatur sudut kartu
-              side: BorderSide(color: colorScheme.sideColor)),
-          color: lingtOrDark,
-          margin: EdgeInsets.symmetric(
-            vertical: 5,
-          ),
-          child: InkWell(
-            onTap: () {
-              // Navigate to NotePage with the note data
-              Navigator.of(context).push(_createRoute(note));
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize:
-                          MainAxisSize.min, // Agar tinggi sesuai dengan konten
-                      children: [
-                        Text(
-                          note.title,
-                          maxLines: 2, // Batasi jumlah baris jika diperlukan
-                          overflow: TextOverflow
-                              .ellipsis, // Tambahkan elipsis jika terlalu panjang
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: fontSize.fontHeader,
-                            color: textColor,
+        return MouseRegion(
+          onEnter: (_) => setState(() => isHovered = true),
+          onExit: (_) => setState(() => isHovered = false),
+          child: Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10), // Mengatur sudut kartu
+                side: BorderSide(color: colorScheme.sideColor)),
+            color: isHovered ? colorScheme.hoverColor : lingtOrDark,
+            margin: EdgeInsets.symmetric(
+              vertical: 5,
+            ),
+            child: InkWell(
+              onTap: () {
+                // Navigate to NotePage with the note data
+                Navigator.of(context).push(_createRoute(widget.note));
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize
+                            .min, // Agar tinggi sesuai dengan konten
+                        children: [
+                          Text(
+                            widget.note.title,
+                            maxLines: 2, // Batasi jumlah baris jika diperlukan
+                            overflow: TextOverflow
+                                .ellipsis, // Tambahkan elipsis jika terlalu panjang
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: fontSize.fontHeader,
+                              color: textColor,
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          note.content,
-                          maxLines: 3, // Membolehkan teks lebih dari satu baris
-                          overflow: TextOverflow.ellipsis, // Teks bisa meluap
-                          style: TextStyle(
-                            color: textColor,
-                            fontSize: fontSize.fontContent,
+                          SizedBox(height: 8),
+                          Text(
+                            widget.note.content,
+                            maxLines:
+                                3, // Membolehkan teks lebih dari satu baris
+                            overflow: TextOverflow.ellipsis, // Teks bisa meluap
+                            style: TextStyle(
+                              color: textColor,
+                              fontSize: fontSize.fontContent,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (note.isPinned) ...[
-                    Transform.translate(
-                      offset: Offset(10, -10), // Geser 5 piksel ke atas
-                      child: Icon(
-                        Icons.push_pin,
-                        color: textColor,
-                        size: 15,
+                        ],
                       ),
                     ),
-                  ]
-                ],
+                    if (widget.note.isPinned) ...[
+                      Transform.translate(
+                        offset: Offset(10, -10), // Geser 5 piksel ke atas
+                        child: Icon(
+                          Icons.push_pin,
+                          color: textColor,
+                          size: 15,
+                        ),
+                      ),
+                    ]
+                  ],
+                ),
               ),
             ),
           ),

@@ -103,13 +103,13 @@ class DrawerPage extends StatelessWidget {
               ListTile(
                 leading: Icon(
                   Icons.home,
-                  color: textColor,
+                  color: colorScheme.iconColor,
                   size: fontSize.fontTitle,
                 ),
                 title: Text(
                   'Beranda',
                   style: TextStyle(
-                    color: textColor,
+                    color: colorScheme.iconColor,
                     fontSize: fontSize.fontHeader,
                   ),
                 ),
@@ -122,7 +122,7 @@ class DrawerPage extends StatelessWidget {
               ListTile(
                 leading: Icon(
                   Icons.archive,
-                  color: textColor,
+                  color: colorScheme.iconColor,
                   size: fontSize.fontTitle,
                 ),
                 title: Text(

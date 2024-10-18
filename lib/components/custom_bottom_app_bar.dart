@@ -4,7 +4,7 @@ import 'package:tulisan_awak_app/components/undo_redo_buttons.dart';
 class CustomBottomAppBar extends StatefulWidget {
   final Color backgroundColor;
   final String formattedDate;
-  final Color textColor;
+  final Color iconColor;
   final Function onColorPickerPressed;
   final Function onImageSourcePressed;
   final UndoHistoryController undoController;
@@ -13,7 +13,7 @@ class CustomBottomAppBar extends StatefulWidget {
     super.key,
     required this.backgroundColor,
     required this.formattedDate,
-    required this.textColor,
+    required this.iconColor,
     required this.onColorPickerPressed,
     required this.onImageSourcePressed,
     required this.undoController,
@@ -63,22 +63,23 @@ class _CustomBottomAppBarState extends State<CustomBottomAppBar> {
             Row(
               children: [
                 IconButton(
-                  icon: Icon(
-                    Icons.palette_outlined,
-                    color: widget.textColor,
-                  ),
-                  onPressed: () {
-                    widget.onColorPickerPressed();
-                  },
-                ),
+                    icon: Icon(
+                      Icons.palette_outlined,
+                      color: widget.iconColor,
+                    ),
+                    onPressed: () {
+                      widget.onColorPickerPressed();
+                    },
+                    tooltip: 'Color'),
                 IconButton(
                   icon: Icon(
                     Icons.image_search,
-                    color: widget.textColor,
+                    color: widget.iconColor,
                   ),
                   onPressed: () async {
                     widget.onImageSourcePressed();
                   },
+                  tooltip: 'Image',
                 ),
               ],
             ),
@@ -88,7 +89,7 @@ class _CustomBottomAppBarState extends State<CustomBottomAppBar> {
                 : Text(
                     'Diedit: ${widget.formattedDate}',
                     style: TextStyle(
-                      color: widget.textColor,
+                      color: widget.iconColor,
                       fontSize: 16, // Adjust as necessary
                     ),
                   ),

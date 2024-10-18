@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:tulisan_awak_app/components/grid_card.dart';
-import 'package:tulisan_awak_app/components/header.dart';
-import 'package:tulisan_awak_app/components/note_card.dart';
+import 'package:tulisan_awak_app/components/grid_card_staggered.dart';
+import 'package:tulisan_awak_app/components/header2.dart';
 import 'package:tulisan_awak_app/constants/constants.dart';
 import 'package:tulisan_awak_app/redux/models/model_store.dart';
 import 'package:tulisan_awak_app/pages/drawer.dart';
 import 'package:tulisan_awak_app/redux/state/app_state.dart';
 
-class ArchivePage extends StatelessWidget {
+class ArchivePage extends StatefulWidget {
   const ArchivePage({super.key});
+
+  @override
+  State<ArchivePage> createState() => _ArchivePageState();
+}
+
+class _ArchivePageState extends State<ArchivePage> {
+  int showGridCount = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +51,16 @@ class ArchivePage extends StatelessWidget {
           appBar: AppBar(
               backgroundColor: lingtOrDark,
               automaticallyImplyLeading: false,
-              title: Header(
+              title: Header2(
                 searchColor: colorScheme.searchColor,
                 textColor: textColor,
                 fontSize: fontSize.fontHeader,
+                onChangeGridCount: () {
+                  setState(() {
+                    showGridCount = showGridCount == 1 ? 2 : 1;
+                  });
+                },
+                gridCount: showGridCount,
               )),
           drawer: DrawerPage(),
           body: filteredNotes.isEmpty
@@ -72,46 +85,35 @@ class ArchivePage extends StatelessWidget {
                     ],
                   ),
                 )
-              : LayoutBuilder(
-                  builder: (BuildContext context, BoxConstraints constraints) {
-                    if (constraints.maxWidth <= 500) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 30),
-                        child: ListView.builder(
-                          itemCount: filteredNotes.length,
-                          itemBuilder: (context, index) {
-                            final note = filteredNotes[index];
-                            return NoteCard(
-                              note: note,
-                              index: index,
-                            );
-                          },
-                        ),
-                      );
-                    } else if (constraints.maxWidth <= 700) {
-                      return GridCard(
-                        allNotes: filteredNotes,
-                        gridCount: 2,
-                      );
-                    } else if (constraints.maxWidth <= 1000) {
-                      return GridCard(
-                        allNotes: filteredNotes,
-                        gridCount: 3,
-                      );
-                    } else {
-                      return GridCard(
-                        allNotes: filteredNotes,
-                        gridCount: 5,
-                      );
-                    }
-                  },
+              : Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: LayoutBuilder(
+                    builder:
+                        (BuildContext context, BoxConstraints constraints) {
+                      if (constraints.maxWidth <= 500) {
+                        return GridCardStaggered(
+                          allNotes: filteredNotes,
+                          gridCount: showGridCount,
+                        );
+                      } else if (constraints.maxWidth <= 700) {
+                        return GridCard(
+                          allNotes: filteredNotes,
+                          gridCount: 2,
+                        );
+                      } else if (constraints.maxWidth <= 1000) {
+                        return GridCard(
+                          allNotes: filteredNotes,
+                          gridCount: 3,
+                        );
+                      } else {
+                        return GridCard(
+                          allNotes: filteredNotes,
+                          gridCount: 5,
+                        );
+                      }
+                    },
+                  ),
                 ),
-          bottomNavigationBar: ClipRRect(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            child: BottomAppBar(
-              color: colorScheme.bottomColor,
-            ),
-          ),
         );
       },
     );

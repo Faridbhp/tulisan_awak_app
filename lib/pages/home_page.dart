@@ -1,10 +1,7 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:tulisan_awak_app/components/grid_card.dart';
 import 'package:tulisan_awak_app/components/grid_card_staggered.dart';
-import 'package:tulisan_awak_app/components/note_card.dart';
 import 'package:tulisan_awak_app/components/search_bar.dart';
 import 'package:tulisan_awak_app/constants/constants.dart';
 import 'package:tulisan_awak_app/redux/actions/actions.dart';
@@ -117,9 +114,11 @@ class _HomePageState extends State<HomePage> {
                   ),
                 )
               : Padding(
-                padding: EdgeInsets.all(10),
-                child: LayoutBuilder(
-                    builder: (BuildContext context, BoxConstraints constraints) {
+                  padding:
+                      EdgeInsets.only(top: 10, bottom: 25, right: 10, left: 10),
+                  child: LayoutBuilder(
+                    builder:
+                        (BuildContext context, BoxConstraints constraints) {
                       if (constraints.maxWidth <= 500) {
                         return GridCardStaggered(
                           allNotes: allNotes,
@@ -143,22 +142,15 @@ class _HomePageState extends State<HomePage> {
                       }
                     },
                   ),
-              ),
-          bottomNavigationBar: ClipRRect(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            child: BottomAppBar(
-              color: colorScheme.bottomColor,
-            ),
-          ),
+                ),
           floatingActionButton: Container(
             decoration: BoxDecoration(
               color: lingtOrDark,
               borderRadius: BorderRadius.circular(25),
             ),
-            padding: EdgeInsets.all(8),
-            margin: EdgeInsets.only(right: 20, top: 10),
+            margin: EdgeInsets.only(right: 0, bottom: 30),
             child: FloatingActionButton(
-              backgroundColor: colorScheme.bottomColor,
+              backgroundColor: colorScheme.buttonPlusColor,
               onPressed: () {
                 String keyData = Uuid().v4();
                 final note = Note(
@@ -171,7 +163,7 @@ class _HomePageState extends State<HomePage> {
                     .dispatch(AddNoteAction(note));
                 Navigator.of(context).push(_createRoute(note));
               },
-              child: Icon(Icons.add, color: textColor),
+              child: Icon(Icons.add, color: colorScheme.iconColor),
             ),
           ),
           floatingActionButtonLocation:
