@@ -7,7 +7,9 @@ class SearchBarCustom extends StatelessWidget {
   final double borderRadius;
   final double borderWidth;
   final double fontSize;
+  final int gridCount;
   final Function(String) onSearchChanged;
+  final Function() onChangeGridCount;
 
   const SearchBarCustom({
     super.key,
@@ -16,15 +18,15 @@ class SearchBarCustom extends StatelessWidget {
     this.borderColor = Colors.white,
     this.borderRadius = 10.0,
     this.borderWidth = 1.0,
+    required this.gridCount,
     required this.fontSize,
     required this.onSearchChanged,
+    required this.onChangeGridCount,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin:
-          EdgeInsets.all(8.0), // Menambahkan sedikit jarak di sekitar komponen
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(borderRadius),
@@ -67,6 +69,16 @@ class SearchBarCustom extends StatelessWidget {
               ),
             ),
           ),
+          IconButton(
+            icon: Icon(
+              gridCount == 1
+                  ? Icons.splitscreen_outlined
+                  : Icons.grid_view_outlined,
+              color: textColor,
+              size: fontSize,
+            ),
+            onPressed: onChangeGridCount,
+          )
         ],
       ),
     );

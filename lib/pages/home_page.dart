@@ -1,6 +1,9 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:tulisan_awak_app/components/grid_card.dart';
+import 'package:tulisan_awak_app/components/grid_card_staggered.dart';
 import 'package:tulisan_awak_app/components/note_card.dart';
 import 'package:tulisan_awak_app/components/search_bar.dart';
 import 'package:tulisan_awak_app/constants/constants.dart';
@@ -21,6 +24,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String searchQuery = '';
+  int showGridCount = 1;
+
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, HomePageStore>(
@@ -75,9 +80,15 @@ class _HomePageState extends State<HomePage> {
               backgroundColor: colorScheme.searchColor,
               textColor: textColor,
               fontSize: fontSize.fontHeader,
+              gridCount: showGridCount,
               onSearchChanged: (value) {
                 setState(() {
                   searchQuery = value; // Update search query
+                });
+              },
+              onChangeGridCount: () {
+                setState(() {
+                  showGridCount = showGridCount == 1 ? 2 : 1;
                 });
               },
             ),
@@ -105,40 +116,34 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                 )
-              : LayoutBuilder(
-                  builder: (BuildContext context, BoxConstraints constraints) {
-                    if (constraints.maxWidth <= 500) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 30),
-                        child: ListView.builder(
-                          itemCount: allNotes.length,
-                          itemBuilder: (context, index) {
-                            final note = allNotes[index];
-                            return NoteCard(
-                              note: note,
-                              index: index,
-                            );
-                          },
-                        ),
-                      );
-                    } else if (constraints.maxWidth <= 700) {
-                      return GridCard(
-                        allNotes: allNotes,
-                        gridCount: 2,
-                      );
-                    } else if (constraints.maxWidth <= 1000) {
-                      return GridCard(
-                        allNotes: allNotes,
-                        gridCount: 3,
-                      );
-                    } else {
-                      return GridCard(
-                        allNotes: allNotes,
-                        gridCount: 5,
-                      );
-                    }
-                  },
-                ),
+              : Padding(
+                padding: EdgeInsets.all(10),
+                child: LayoutBuilder(
+                    builder: (BuildContext context, BoxConstraints constraints) {
+                      if (constraints.maxWidth <= 500) {
+                        return GridCardStaggered(
+                          allNotes: allNotes,
+                          gridCount: showGridCount,
+                        );
+                      } else if (constraints.maxWidth <= 700) {
+                        return GridCard(
+                          allNotes: allNotes,
+                          gridCount: 2,
+                        );
+                      } else if (constraints.maxWidth <= 1000) {
+                        return GridCard(
+                          allNotes: allNotes,
+                          gridCount: 3,
+                        );
+                      } else {
+                        return GridCard(
+                          allNotes: allNotes,
+                          gridCount: 5,
+                        );
+                      }
+                    },
+                  ),
+              ),
           bottomNavigationBar: ClipRRect(
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             child: BottomAppBar(

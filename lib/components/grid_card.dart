@@ -19,7 +19,6 @@ class GridCard extends StatelessWidget {
           crossAxisCount: gridCount, // Contoh: tiga kartu per baris
           childAspectRatio: 1, // Atur aspek rasio sesuai kebutuhan
           crossAxisSpacing: 10, // Ruang antara kartu
-          mainAxisSpacing: 10, // Ruang antara baris
         ),
         itemCount: allNotes.length, // Menggunakan panjang daftar allNotes
         itemBuilder: (context, index) {

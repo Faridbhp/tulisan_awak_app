@@ -51,7 +51,9 @@ class NoteCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(10), // Mengatur sudut kartu
               side: BorderSide(color: colorScheme.sideColor)),
           color: lingtOrDark,
-          margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          margin: EdgeInsets.symmetric(
+            vertical: 5,
+          ),
           child: InkWell(
             onTap: () {
               // Navigate to NotePage with the note data
