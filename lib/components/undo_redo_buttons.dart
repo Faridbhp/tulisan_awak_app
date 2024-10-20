@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:tulisan_awak_app/constants/constants.dart';
+import 'package:tulisan_awak_app/function/get_color_scheme.dart';
 import 'package:tulisan_awak_app/redux/models/model_store.dart';
 import 'package:tulisan_awak_app/redux/state/app_state.dart';
 
@@ -22,8 +23,7 @@ class UndoRedoButtons extends StatelessWidget {
         store.state.showGridCount,
       ),
       builder: (context, storeData) {
-        ColorStore colorScheme =
-            storeData.theme == 'Light' ? ColorStore.light : ColorStore.dark;
+        final colorScheme = getColorScheme(context, storeData.theme);
         return ValueListenableBuilder<UndoHistoryValue>(
           valueListenable: undoController,
           builder: (_, value, __) {

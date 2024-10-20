@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:tulisan_awak_app/constants/constants.dart';
+import 'package:tulisan_awak_app/function/get_color_scheme.dart';
+import 'package:tulisan_awak_app/function/get_font_size.dart';
 import 'package:tulisan_awak_app/pages/archive_page.dart';
 import 'package:tulisan_awak_app/pages/home_page.dart';
 import 'package:tulisan_awak_app/pages/setting_page.dart';
@@ -18,22 +20,10 @@ class DrawerPage extends StatelessWidget {
         store.state.fontSize,
       ),
       builder: (context, storeData) {
-        ColorStore colorScheme =
-            storeData.theme == 'Light' ? ColorStore.light : ColorStore.dark;
+        final colorScheme = getColorScheme(context, storeData.theme);
         Color lingtOrDark = colorScheme.backgroundColor;
         Color textColor = colorScheme.textColor;
-        FontStore fontSize;
-
-        switch (storeData.fontSize) {
-          case "Extra Small":
-            fontSize = FontStore.exstraSmall;
-            break;
-          case "Big":
-            fontSize = FontStore.big;
-            break;
-          default:
-            fontSize = FontStore.small;
-        }
+        FontStore fontSize = getFontStore(storeData.fontSize);
 
         return Drawer(
           // Add the drawer widget

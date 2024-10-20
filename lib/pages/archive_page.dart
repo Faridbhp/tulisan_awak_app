@@ -4,6 +4,8 @@ import 'package:tulisan_awak_app/components/grid_card.dart';
 import 'package:tulisan_awak_app/components/grid_card_staggered.dart';
 import 'package:tulisan_awak_app/components/header2.dart';
 import 'package:tulisan_awak_app/constants/constants.dart';
+import 'package:tulisan_awak_app/function/get_color_scheme.dart';
+import 'package:tulisan_awak_app/function/get_font_size.dart';
 import 'package:tulisan_awak_app/redux/actions/setting_action.dart';
 import 'package:tulisan_awak_app/redux/models/model_store.dart';
 import 'package:tulisan_awak_app/pages/drawer.dart';
@@ -27,23 +29,11 @@ class _ArchivePageState extends State<ArchivePage> {
         store.state.showGridCount,
       ), // Get notes from the store
       builder: (context, storeData) {
-        ColorStore colorScheme =
-            storeData.theme == 'Light' ? ColorStore.light : ColorStore.dark;
+        final colorScheme = getColorScheme(context, storeData.theme);
         Color lingtOrDark = colorScheme.backgroundColor;
         Color textColor = colorScheme.textColor;
-        FontStore fontSize;
+        FontStore fontSize = getFontStore(storeData.fontSize);
         int showGridCount = storeData.showGridCount;
-
-        switch (storeData.fontSize) {
-          case "Extra Small":
-            fontSize = FontStore.exstraSmall;
-            break;
-          case "Big":
-            fontSize = FontStore.big;
-            break;
-          default:
-            fontSize = FontStore.small;
-        }
 
         final filteredNotes =
             storeData.notes.where((note) => note.isArsip).toList();

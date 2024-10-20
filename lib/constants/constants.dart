@@ -62,7 +62,7 @@ class FontStore {
   });
 
   // Define extra small font
-  static FontStore exstraSmall = FontStore(
+  static FontStore extraSmall = FontStore(
     fontTitle: 18,
     fontHeader: 16,
     fontContent: 14,

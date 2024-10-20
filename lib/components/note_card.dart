@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:tulisan_awak_app/constants/constants.dart';
+import 'package:tulisan_awak_app/function/get_color_scheme.dart';
+import 'package:tulisan_awak_app/function/get_font_size.dart';
 import 'package:tulisan_awak_app/redux/models/model_store.dart';
 import 'package:tulisan_awak_app/redux/models/note.dart';
 import 'package:tulisan_awak_app/pages/note_page.dart';
@@ -31,26 +33,13 @@ class _NoteCardState extends State<NoteCard> {
         store.state.fontSize,
       ),
       builder: (context, storeData) {
-        FontStore fontSize;
-        ColorStore colorScheme =
-            (widget.note.color == Colors.white) && (storeData.theme == 'Light')
-                ? ColorStore.light
-                : ColorStore.dark;
+        final colorScheme =
+            getColorScheme(context, storeData.theme, widget.note.color);
+        FontStore fontSize = getFontStore(storeData.fontSize);
         Color lingtOrDark = widget.note.color == Colors.white
             ? colorScheme.backgroundColor
             : widget.note.color;
         Color textColor = colorScheme.textColor;
-
-        switch (storeData.fontSize) {
-          case "Extra Small":
-            fontSize = FontStore.exstraSmall;
-            break;
-          case "Big":
-            fontSize = FontStore.big;
-            break;
-          default:
-            fontSize = FontStore.small;
-        }
 
         return MouseRegion(
           onEnter: (_) => setState(() => isHovered = true),

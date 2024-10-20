@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:tulisan_awak_app/components/header.dart';
 import 'package:tulisan_awak_app/constants/constants.dart';
+import 'package:tulisan_awak_app/function/get_color_scheme.dart';
+import 'package:tulisan_awak_app/function/get_font_size.dart';
 import 'package:tulisan_awak_app/pages/drawer.dart';
 import 'package:tulisan_awak_app/redux/actions/setting_action.dart';
 import 'package:tulisan_awak_app/redux/models/model_store.dart';
@@ -20,6 +22,8 @@ class _SettingPageState extends State<SettingPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Detect the system's brightness
+
     return StoreConnector<AppState, Settings>(
       converter: (store) => Settings(
         store.state.theme,
@@ -28,23 +32,11 @@ class _SettingPageState extends State<SettingPage> {
       builder: (context, settings) {
         _selectedTheme = settings.theme;
         _selectedFontSize = settings.fontSize;
+        final colorScheme = getColorScheme(context, _selectedTheme);
 
-        ColorStore colorScheme =
-            _selectedTheme == 'Light' ? ColorStore.light : ColorStore.dark;
         Color lingtOrDark = colorScheme.backgroundColor;
         Color textColor = colorScheme.textColor;
-        FontStore fontSize;
-
-        switch (settings.fontSize) {
-          case "Extra Small":
-            fontSize = FontStore.exstraSmall;
-            break;
-          case "Big":
-            fontSize = FontStore.big;
-            break;
-          default:
-            fontSize = FontStore.small;
-        }
+        FontStore fontSize = getFontStore(settings.fontSize);
 
         return Scaffold(
           backgroundColor: lingtOrDark,

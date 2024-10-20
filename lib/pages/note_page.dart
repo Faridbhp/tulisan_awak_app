@@ -10,6 +10,8 @@ import 'package:intl/intl.dart';
 import 'package:tulisan_awak_app/components/color_picker.dart';
 import 'package:tulisan_awak_app/components/custom_bottom_app_bar.dart';
 import 'package:tulisan_awak_app/constants/constants.dart';
+import 'package:tulisan_awak_app/function/get_color_scheme.dart';
+import 'package:tulisan_awak_app/function/get_font_size.dart';
 import 'package:tulisan_awak_app/redux/actions/notes_actions.dart';
 import 'package:tulisan_awak_app/components/alert_dialog.dart';
 import 'package:tulisan_awak_app/redux/models/model_store.dart';
@@ -76,27 +78,15 @@ class _NotePageState extends State<NotePage> {
         store.state.showGridCount,
       ),
       builder: (context, storeData) {
-        ColorStore colorScheme =
-            (selectedColor == Colors.white) && (storeData.theme == 'Light')
-                ? ColorStore.light
-                : ColorStore.dark;
+        // final colorScheme = getColorScheme(context, storeData.theme);
+        final colorScheme =
+            getColorScheme(context, storeData.theme, selectedColor);
         Color lingtOrDark = selectedColor == Colors.white
             ? colorScheme.backgroundColor
             : selectedColor;
         Color textColor = colorScheme.textColor;
 
-        FontStore fontSize;
-
-        switch (storeData.fontSize) {
-          case "Extra Small":
-            fontSize = FontStore.exstraSmall;
-            break;
-          case "Big":
-            fontSize = FontStore.big;
-            break;
-          default:
-            fontSize = FontStore.small;
-        }
+        FontStore fontSize = getFontStore(storeData.fontSize);
 
         return Scaffold(
           backgroundColor: lingtOrDark,

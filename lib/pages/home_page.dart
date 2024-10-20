@@ -4,6 +4,8 @@ import 'package:tulisan_awak_app/components/grid_card.dart';
 import 'package:tulisan_awak_app/components/grid_card_staggered.dart';
 import 'package:tulisan_awak_app/components/search_bar.dart';
 import 'package:tulisan_awak_app/constants/constants.dart';
+import 'package:tulisan_awak_app/function/get_color_scheme.dart';
+import 'package:tulisan_awak_app/function/get_font_size.dart';
 import 'package:tulisan_awak_app/redux/actions/notes_actions.dart';
 import 'package:tulisan_awak_app/redux/actions/setting_action.dart';
 import 'package:tulisan_awak_app/redux/models/model_store.dart';
@@ -33,22 +35,11 @@ class _HomePageState extends State<HomePage> {
         store.state.showGridCount,
       ),
       builder: (context, storeData) {
-        ColorStore colorScheme =
-            storeData.theme == 'Light' ? ColorStore.light : ColorStore.dark;
+        final colorScheme = getColorScheme(context, storeData.theme);
         Color lingtOrDark = colorScheme.backgroundColor;
         Color textColor = colorScheme.textColor;
-        FontStore fontSize;
+        FontStore fontSize = getFontStore(storeData.fontSize);
         int showGridCount = storeData.showGridCount;
-        switch (storeData.fontSize) {
-          case "Extra Small":
-            fontSize = FontStore.exstraSmall;
-            break;
-          case "Big":
-            fontSize = FontStore.big;
-            break;
-          default:
-            fontSize = FontStore.small;
-        }
 
         // cari data yang tidak di arsipkan
         final filterDataNotArsip =

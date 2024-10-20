@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
-import 'package:tulisan_awak_app/constants/constants.dart';
+import 'package:tulisan_awak_app/function/get_color_scheme.dart';
 import 'package:tulisan_awak_app/redux/state/app_state.dart';
 import 'package:tulisan_awak_app/redux/store/store.dart';
 import 'pages/home_page.dart';
@@ -27,8 +27,7 @@ class MyApp extends StatelessWidget {
       child: StoreConnector<AppState, String>(
         converter: (store) => store.state.theme,
         builder: (context, theme) {
-          ColorStore colorScheme =
-              theme == 'Light' ? ColorStore.light : ColorStore.dark;
+          final colorScheme = getColorScheme(context, theme);
 
           return MaterialApp(
             debugShowCheckedModeBanner: false,
