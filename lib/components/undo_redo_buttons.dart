@@ -16,7 +16,11 @@ class UndoRedoButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return StoreConnector<AppState, HomePageStore>(
       converter: (store) => HomePageStore(
-          store.state.notes, store.state.fontSize, store.state.theme),
+        store.state.notes,
+        store.state.fontSize,
+        store.state.theme,
+        store.state.showGridCount,
+      ),
       builder: (context, storeData) {
         ColorStore colorScheme =
             storeData.theme == 'Light' ? ColorStore.light : ColorStore.dark;
@@ -39,9 +43,9 @@ class UndoRedoButtons extends StatelessWidget {
                   padding: EdgeInsets.zero,
                   icon: Icon(
                     Icons.redo_rounded,
-                     color: value.canRedo
-                      ? colorScheme.iconColor
-                      : Colors.grey, // Change color if disabled,
+                    color: value.canRedo
+                        ? colorScheme.iconColor
+                        : Colors.grey, // Change color if disabled,
                   ),
                   onPressed: value.canRedo
                       ? () => undoController.redo()
