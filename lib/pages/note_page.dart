@@ -7,9 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:tulisan_awak_app/components/color_picker.dart';
 import 'package:tulisan_awak_app/components/custom_bottom_app_bar.dart';
+import 'package:tulisan_awak_app/components/show_item_dialog.dart';
 import 'package:tulisan_awak_app/constants/constants.dart';
+import 'package:tulisan_awak_app/function/create_pdf.dart';
 import 'package:tulisan_awak_app/function/get_color_scheme.dart';
 import 'package:tulisan_awak_app/function/get_font_size.dart';
 import 'package:tulisan_awak_app/redux/actions/notes_actions.dart';
@@ -18,6 +22,7 @@ import 'package:tulisan_awak_app/redux/models/model_store.dart';
 import 'package:tulisan_awak_app/redux/models/note.dart';
 import 'package:tulisan_awak_app/redux/state/app_state.dart';
 import 'package:uuid/uuid.dart';
+import 'package:pdf/widgets.dart' as pw;
 
 class NotePage extends StatefulWidget {
   final Note? note;
@@ -234,9 +239,8 @@ class _NotePageState extends State<NotePage> {
             onColorPickerPressed: () {
               _showColorPicker(context);
             },
-            onImageSourcePressed: () async {
-              // await requestPermissions();
-              _showImageSourceDialog(context);
+            onItemListPressed: () async {
+              _showItemDialog(context);
             },
           ),
         );
@@ -435,33 +439,22 @@ class _NotePageState extends State<NotePage> {
     );
   }
 
-  void _showImageSourceDialog(BuildContext context) {
+  void _showItemDialog(BuildContext context) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
-        return SafeArea(
-          child: Wrap(
-            children: <Widget>[
-              if (!kIsWeb && !Platform.isWindows) ...[
-                ListTile(
-                  leading: Icon(Icons.camera),
-                  title: Text('Camera'),
-                  onTap: () {
-                    Navigator.of(context).pop(); // Menutup dialog
-                    _pickImage(ImageSource.camera); // Buka kamera
-                  },
-                ),
-              ],
-              ListTile(
-                leading: Icon(Icons.photo_library),
-                title: Text('Gallery'),
-                onTap: () {
-                  Navigator.of(context).pop(); // Menutup dialog
-                  _pickImage(ImageSource.gallery); // Buka galeri
-                },
-              ),
-            ],
-          ),
+        return ShowItemDialog(
+          onImageSourceSelected: (ImageSource source) {
+            _pickImage(source); // Panggil fungsi pemilihan gambar
+          },
+          onCreatePdf: () async {
+            await createPDF(
+              textTitle: titleController.text,
+              textContent: noteController.text,
+              imageBlobUrls: _imageBlobUrls,
+              imageFiles: _imageFiles,
+            );
+          },
         );
       },
     );

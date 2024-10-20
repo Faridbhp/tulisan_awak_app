@@ -6,7 +6,7 @@ class CustomBottomAppBar extends StatefulWidget {
   final String formattedDate;
   final Color iconColor;
   final Function onColorPickerPressed;
-  final Function onImageSourcePressed;
+  final Function onItemListPressed;
   final UndoHistoryController undoController;
 
   const CustomBottomAppBar({
@@ -15,7 +15,7 @@ class CustomBottomAppBar extends StatefulWidget {
     required this.formattedDate,
     required this.iconColor,
     required this.onColorPickerPressed,
-    required this.onImageSourcePressed,
+    required this.onItemListPressed,
     required this.undoController,
   });
 
@@ -73,11 +73,11 @@ class _CustomBottomAppBarState extends State<CustomBottomAppBar> {
                     tooltip: 'Color'),
                 IconButton(
                   icon: Icon(
-                    Icons.image_search,
+                    Icons.add_box_outlined,
                     color: widget.iconColor,
                   ),
                   onPressed: () async {
-                    widget.onImageSourcePressed();
+                    widget.onItemListPressed();
                   },
                   tooltip: 'Image',
                 ),
