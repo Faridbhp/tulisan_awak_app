@@ -113,10 +113,8 @@ class _SettingPageState extends State<SettingPage> {
                                         newValue)); // Dispatch action to Redux store
                               });
                             },
-                            items: <String>[
-                              'Light',
-                              'Dark',
-                            ].map<DropdownMenuItem<String>>((String value) {
+                            items: <String>['Light', 'Dark', 'System']
+                                .map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
                                 child: Row(
