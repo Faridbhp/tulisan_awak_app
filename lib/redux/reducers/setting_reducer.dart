@@ -10,7 +10,10 @@ AppState settingReducer(AppState state, dynamic action) {
     saveFontSizeToLocalStorage(
         action.fontSize); // Save fontSize to local storage
     return state.copyWith(fontSize: action.fontSize);
-  } else if (action is ChangeGridViewAction) {}
+  } else if (action is ChangeGridViewAction) {
+    saveShowGridCountToLocalStorage(action.showGridCount);
+    return state.copyWith(showGridCount: action.showGridCount);
+  }
 
   return state;
 }

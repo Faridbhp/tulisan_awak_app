@@ -4,6 +4,7 @@ import 'package:tulisan_awak_app/components/grid_card.dart';
 import 'package:tulisan_awak_app/components/grid_card_staggered.dart';
 import 'package:tulisan_awak_app/components/header2.dart';
 import 'package:tulisan_awak_app/constants/constants.dart';
+import 'package:tulisan_awak_app/redux/actions/setting_action.dart';
 import 'package:tulisan_awak_app/redux/models/model_store.dart';
 import 'package:tulisan_awak_app/pages/drawer.dart';
 import 'package:tulisan_awak_app/redux/state/app_state.dart';
@@ -16,8 +17,6 @@ class ArchivePage extends StatefulWidget {
 }
 
 class _ArchivePageState extends State<ArchivePage> {
-  int showGridCount = 1;
-
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, HomePageStore>(
@@ -25,6 +24,7 @@ class _ArchivePageState extends State<ArchivePage> {
         store.state.notes,
         store.state.fontSize,
         store.state.theme,
+        store.state.showGridCount,
       ), // Get notes from the store
       builder: (context, storeData) {
         ColorStore colorScheme =
@@ -32,6 +32,7 @@ class _ArchivePageState extends State<ArchivePage> {
         Color lingtOrDark = colorScheme.backgroundColor;
         Color textColor = colorScheme.textColor;
         FontStore fontSize;
+        int showGridCount = storeData.showGridCount;
 
         switch (storeData.fontSize) {
           case "Extra Small":
@@ -56,9 +57,8 @@ class _ArchivePageState extends State<ArchivePage> {
                 textColor: textColor,
                 fontSize: fontSize.fontHeader,
                 onChangeGridCount: () {
-                  setState(() {
-                    showGridCount = showGridCount == 1 ? 2 : 1;
-                  });
+                  StoreProvider.of<AppState>(context).dispatch(
+                      ChangeGridViewAction(showGridCount == 1 ? 2 : 1));
                 },
                 gridCount: showGridCount,
               )),

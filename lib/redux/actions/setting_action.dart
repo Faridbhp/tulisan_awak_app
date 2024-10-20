@@ -9,3 +9,9 @@ class ChangeFontSizeAction {
 
   ChangeFontSizeAction(this.fontSize);
 }
+
+class ChangeGridViewAction {
+  final int showGridCount;
+
+  ChangeGridViewAction(this.showGridCount);
+}

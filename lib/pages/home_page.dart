@@ -5,6 +5,7 @@ import 'package:tulisan_awak_app/components/grid_card_staggered.dart';
 import 'package:tulisan_awak_app/components/search_bar.dart';
 import 'package:tulisan_awak_app/constants/constants.dart';
 import 'package:tulisan_awak_app/redux/actions/notes_actions.dart';
+import 'package:tulisan_awak_app/redux/actions/setting_action.dart';
 import 'package:tulisan_awak_app/redux/models/model_store.dart';
 import 'package:tulisan_awak_app/pages/drawer.dart';
 import 'package:tulisan_awak_app/pages/note_page.dart';
@@ -21,7 +22,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String searchQuery = '';
-  int showGridCount = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +30,7 @@ class _HomePageState extends State<HomePage> {
         store.state.notes,
         store.state.fontSize,
         store.state.theme,
+        store.state.showGridCount,
       ),
       builder: (context, storeData) {
         ColorStore colorScheme =
@@ -37,7 +38,7 @@ class _HomePageState extends State<HomePage> {
         Color lingtOrDark = colorScheme.backgroundColor;
         Color textColor = colorScheme.textColor;
         FontStore fontSize;
-
+        int showGridCount = storeData.showGridCount;
         switch (storeData.fontSize) {
           case "Extra Small":
             fontSize = FontStore.exstraSmall;
@@ -84,9 +85,8 @@ class _HomePageState extends State<HomePage> {
                 });
               },
               onChangeGridCount: () {
-                setState(() {
-                  showGridCount = showGridCount == 1 ? 2 : 1;
-                });
+                StoreProvider.of<AppState>(context)
+                    .dispatch(ChangeGridViewAction(showGridCount == 1 ? 2 : 1));
               },
             ),
           ),

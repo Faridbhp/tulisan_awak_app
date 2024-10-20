@@ -12,6 +12,11 @@ Future<void> saveFontSizeToLocalStorage(String fontSize) async {
   prefs.setString('fontSize', fontSize);
 }
 
+Future<void> saveShowGridCountToLocalStorage(int showGridCount) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setInt('showGridCount', showGridCount);
+}
+
 Future<String> loadThemeFromLocalStorage() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   return prefs.getString('theme') ?? 'Light'; // Default theme is 'Light'
@@ -20,4 +25,9 @@ Future<String> loadThemeFromLocalStorage() async {
 Future<String> loadFontSizeFromLocalStorage() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   return prefs.getString('fontSize') ?? 'Small'; // Default fontSize is 'Small'
+}
+
+Future<int> loadShowGridCountFromLocalStorage() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getInt('showGridCount') ?? 1; // Default fontSize is 'Small'
 }

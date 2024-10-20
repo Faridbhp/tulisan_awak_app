@@ -73,6 +73,7 @@ class _NotePageState extends State<NotePage> {
         store.state.notes,
         store.state.fontSize,
         store.state.theme,
+        store.state.showGridCount,
       ),
       builder: (context, storeData) {
         ColorStore colorScheme =

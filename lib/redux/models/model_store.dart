@@ -12,6 +12,12 @@ class HomePageStore {
   final List<Note> notes;
   final String theme;
   final String fontSize;
+  final int showGridCount;
 
-  HomePageStore(this.notes, this.fontSize, this.theme);
+  HomePageStore(
+    this.notes,
+    this.fontSize,
+    this.theme,
+    this.showGridCount,
+  );
 }
